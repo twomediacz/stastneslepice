@@ -1,0 +1,4 @@
+# Blokuje PHP a ostatní skripty
+<FilesMatch "\.(?i:php|phtml|php3|php4|php5|phps|shtml|cgi|pl)$">
+    Require all denied
+</FilesMatch>

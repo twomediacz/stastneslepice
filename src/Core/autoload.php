@@ -6,7 +6,7 @@
  */
 spl_autoload_register(function (string $class): void {
     $prefix = 'App\\';
-    $baseDir = __DIR__ . '/../src/';
+    $baseDir = __DIR__ . '/../../src/';
 
     if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
         return;

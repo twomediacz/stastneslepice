@@ -5,3 +5,6 @@
 .DS_Store
 *.swp
 .vscode/sftp.json
+/storage/cache/
+/public/uploads/*
+!/public/uploads/.htaccess

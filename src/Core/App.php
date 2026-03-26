@@ -12,6 +12,10 @@ class App
         $this->config = require __DIR__ . '/../../config/config.php';
         date_default_timezone_set($this->config['app']['timezone']);
 
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
         Database::connect($this->config['db']);
         $this->router = new Router();
     }

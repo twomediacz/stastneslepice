@@ -54,7 +54,4 @@ CREATE TABLE IF NOT EXISTS settings (
 
 -- Výchozí nastavení
 INSERT INTO settings (setting_key, setting_value) VALUES
-    ('chicken_count', '7'),
-    ('breed', 'Dominant Kropenatý'),
-    ('chickens_birth_date', '2025-07-26'),
     ('locale_name', 'Doloplazy');
