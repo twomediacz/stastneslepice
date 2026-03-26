@@ -14,11 +14,13 @@
 <body>
     <div class="site-header-wrap">
     <header class="site-header">
-        <img src="/img/chicken-logo.png" alt="Slepice" class="header-logo">
+        <a href="/" class="header-brand">
+            <img src="/img/chicken-logo.png" alt="Slepice" class="header-logo">
+        </a>
         <div class="header-content">
             <div class="header-top-row">
                 <div class="header-left">
-                    <h1>Chov slepic &ndash; Doloplazy</h1>
+                    <a href="/" class="header-brand"><h1>Chov slepic &ndash; Doloplazy</h1></a>
                 </div>
             </div>
             <?php if (\App\Core\Auth::check()): ?>
@@ -30,6 +32,7 @@
             </nav>
             <?php endif; ?>
         </div>
+        <img src="/img/hens.png" alt="" class="header-hens">
     </header>
     </div>
 

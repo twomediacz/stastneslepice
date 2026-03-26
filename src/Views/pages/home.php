@@ -10,7 +10,7 @@ $todayNote = $todayEggs['note'] ?? '';
 <section class="dashboard">
 
     <!-- Klimatické karty -->
-    <div class="card dashboard__climate-card">
+    <!-- <div class="card dashboard__climate-card">
         <div class="dashboard__climate">
             <div class="climate-section climate-section--coop">
                 <div class="climate-section__header climate-section__header--blue">Kurník</div>
@@ -32,7 +32,7 @@ $todayNote = $todayEggs['note'] ?? '';
                     </div>
             </div>
         </div>
-    </div>
+    </div> -->
 
     <!-- Hlavní obsah: 2 sloupce -->
     <div class="dashboard__main">
@@ -47,8 +47,8 @@ $todayNote = $todayEggs['note'] ?? '';
                     <button type="button" id="egg-add-btn" class="btn btn--primary btn--round" onclick="App.eggs.toggleForm()">Přidat</button>
                 </div>
                 <div class="card__inner">
-                    <div class="egg-table-wrap">
-                        <table class="egg-table">
+                    <div class="egg-table-header-wrap">
+                        <table class="egg-table egg-table--header">
                             <thead>
                                 <tr>
                                     <th>Datum</th>
@@ -57,6 +57,10 @@ $todayNote = $todayEggs['note'] ?? '';
                                     <th></th>
                                 </tr>
                             </thead>
+                        </table>
+                    </div>
+                    <div class="egg-table-wrap">
+                        <table class="egg-table">
                             <tbody id="egg-table-body">
                                 <?php foreach ($recentEggs as $egg): ?>
                                 <tr data-id="<?= $egg['id'] ?>" data-date="<?= $egg['record_date'] ?>" data-count="<?= $egg['egg_count'] ?>" data-note="<?= htmlspecialchars($egg['note'] ?? '') ?>">
@@ -106,8 +110,8 @@ $todayNote = $todayEggs['note'] ?? '';
                     <ul id="notes-list" class="notes-list">
                         <?php foreach ($notes as $note): ?>
                         <li data-id="<?= $note['id'] ?>" data-content="<?= htmlspecialchars($note['content']) ?>">
-                            <strong><?= date('d.m.', strtotime($note['note_date'])) ?></strong>
-                            &ndash; <span class="note-text"><?= htmlspecialchars($note['content']) ?></span>
+                            <strong><?= date('d.m.Y', strtotime($note['note_date'])) ?>&nbsp;</strong>
+                            <span class="note-text"><?= htmlspecialchars($note['content']) ?></span>
                             <span class="note-actions">
                                 <button class="btn-icon" onclick="App.notes.edit(this.closest('li'))" title="Upravit">&#x270E;</button>
                                 <button class="btn-icon btn-icon--danger" onclick="App.notes.remove(<?= $note['id'] ?>)" title="Smazat">&times;</button>
@@ -127,20 +131,50 @@ $todayNote = $todayEggs['note'] ?? '';
         <!-- PRAVÝ SLOUPEC -->
         <div class="dashboard__right">
 
+            <!-- Kurník -->
+            <div class="card">
+                <div class="card__header card__header--brown">Kurník</div>
+                <div class="stat-grid2">
+                    <div class="stat-card stat-card--brown">
+                        <span class="stat-card__value"><span class="climate-icon">&#x1F321;&#xFE0F;</span> <?= $coopTemp ?>&thinsp;&deg;C</span>
+                        <span class="stat-card__label">Teplota</span>
+                    </div>
+                    <div class="stat-card stat-card--brown">
+                        <span class="stat-card__value"><span class="climate-icon">&#x1F4A7;</span> <?= $coopHum ?>&thinsp;%</span>
+                        <span class="stat-card__label">Vlhkost</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Výběh -->
+            <div class="card">
+                <div class="card__header card__header--teal">Výběh</div>
+                <div class="stat-grid2">
+                    <div class="stat-card stat-card--teal">
+                        <span class="stat-card__value"><span class="climate-icon">&#x1F321;&#xFE0F;</span> <?= $outTemp ?>&thinsp;&deg;C</span>
+                        <span class="stat-card__label">Teplota</span>
+                    </div>
+                    <div class="stat-card stat-card--teal">
+                        <span class="stat-card__value"><span class="climate-icon">&#x1F4A7;</span> <?= $outHum ?>&thinsp;%</span>
+                        <span class="stat-card__label">Vlhkost</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Statistiky -->
             <div class="card">
                 <div class="card__header card__header--green">Statistika</div>
                 <div class="stat-grid">
                     <div class="stat-card">
-                        <span class="stat-card__value"><?= $chickenCount['active'] ?></span>
+                        <span class="stat-card__value">&#x1F414; <?= $chickenCount['active'] ?></span>
                         <span class="stat-card__label">Slepic</span>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-card__value" id="stat-total"><?= number_format($totalEggs, 0, ',', ' ') ?></span>
+                        <span class="stat-card__value" id="stat-total">&#x1F95A; <?= number_format($totalEggs, 0, ',', ' ') ?></span>
                         <span class="stat-card__label">Vajec celkem</span>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-card__value" id="stat-avg"><?= number_format($dailyAvg, 1, ',', ' ') ?></span>
+                        <span class="stat-card__value" id="stat-avg">&#x1F95A; <?= number_format($dailyAvg, 1, ',', ' ') ?></span>
                         <span class="stat-card__label">Prům. vajec/den</span>
                     </div>
                 </div>
