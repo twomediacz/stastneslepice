@@ -1,0 +1,8 @@
+RewriteEngine On
+
+# Přesměrování všech požadavků do public/
+RewriteCond %{REQUEST_URI} !^/public/
+RewriteRule ^(.*)$ /public/$1 [L]
+
+# Zamezení přístupu k citlivým složkám
+RewriteRule ^(src|config|database|storage|vendor)/ - [F,L]
