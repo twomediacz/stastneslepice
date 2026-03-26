@@ -134,7 +134,7 @@ const App = {
             const totalEl = document.getElementById('stat-total');
             const avgEl = document.getElementById('stat-avg');
             if (totalEl) totalEl.textContent = total.toLocaleString('cs-CZ');
-            if (avgEl) avgEl.textContent = avg.toLocaleString('cs-CZ', { minimumFractionDigits: 1 }) + ' / den';
+            if (avgEl) avgEl.textContent = avg.toLocaleString('cs-CZ', { minimumFractionDigits: 1 });
         }
     },
 

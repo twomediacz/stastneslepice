@@ -20,19 +20,13 @@
                 <div class="header-left">
                     <h1>Chov slepic &ndash; Doloplazy</h1>
                 </div>
-                <div class="header-right">
-                    <span class="header-updated">Aktualizov&aacute;no: <?= date('d.m.Y H:i') ?></span>
-                    <?php if (\App\Core\Auth::check()): ?>
-                        <a href="/logout" class="btn btn--small btn--outline">Odhl&aacute;sit</a>
-                    <?php endif; ?>
-                </div>
             </div>
             <?php if (\App\Core\Auth::check()): ?>
             <?php $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); ?>
             <nav class="site-nav">
                 <a href="/" class="site-nav__tab <?= ($currentPath === '/' || $currentPath === '') ? 'is-active' : '' ?>">N&aacute;stěnka</a>
                 <a href="/slepice" class="site-nav__tab <?= $currentPath === '/slepice' ? 'is-active' : '' ?>">Slepice</a>
-                <a href="/zive" class="site-nav__tab site-nav__tab--live <?= $currentPath === '/zive' ? 'is-active' : '' ?>">&#9654; Živě</a>
+                <a href="/zive" class="site-nav__tab <?= $currentPath === '/zive' ? 'is-active' : '' ?>">Živě</a>
             </nav>
             <?php endif; ?>
         </div>

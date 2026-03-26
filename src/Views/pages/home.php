@@ -128,20 +128,20 @@ $todayNote = $todayEggs['note'] ?? '';
         <div class="dashboard__right">
 
             <!-- Statistiky -->
-            <div class="card card--stats">
-                <h2>&#x1F4CA; Statistika</h2>
-                <div class="stat-items">
-                    <div class="stat-item">
-                        <span class="stat-label">Počet produktivních slepic:</span>
-                        <strong><?= $chickenCount['active'] ?></strong>
+            <div class="card">
+                <div class="card__header card__header--green">Statistika</div>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <span class="stat-card__value"><?= $chickenCount['active'] ?></span>
+                        <span class="stat-card__label">Slepic</span>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Celkem vajec:</span>
-                        <strong id="stat-total"><?= number_format($totalEggs, 0, ',', ' ') ?></strong>
+                    <div class="stat-card">
+                        <span class="stat-card__value" id="stat-total"><?= number_format($totalEggs, 0, ',', ' ') ?></span>
+                        <span class="stat-card__label">Vajec celkem</span>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Průměr:</span>
-                        <strong id="stat-avg"><?= number_format($dailyAvg, 1, ',', ' ') ?> / den</strong>
+                    <div class="stat-card">
+                        <span class="stat-card__value" id="stat-avg"><?= number_format($dailyAvg, 1, ',', ' ') ?></span>
+                        <span class="stat-card__label">Prům. vajec/den</span>
                     </div>
                 </div>
             </div>

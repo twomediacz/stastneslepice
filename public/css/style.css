@@ -43,6 +43,19 @@ a { color: var(--color-primary); }
    ========================================== */
 .site-header-wrap {
     background: #f9E9A0;
+    position: relative;
+    overflow: hidden;
+}
+
+.site-header-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #f9E9A0 url('/img/zahlavi6.png') center bottom / auto 100% repeat-x;
+    background-blend-mode: multiply;
+    -webkit-mask-image: linear-gradient(to right, transparent 40%, black 55%);
+    mask-image: linear-gradient(to right, transparent 40%, black 55%);
+    pointer-events: none;
 }
 
 .site-header {
@@ -53,6 +66,8 @@ a { color: var(--color-primary); }
     display: flex;
     align-items: center;
     gap: 0.8rem;
+    position: relative;
+    z-index: 1;
 }
 
 .header-logo {
@@ -564,28 +579,36 @@ a { color: var(--color-primary); }
 /* ==========================================
    STATS
    ========================================== */
-.card--stats .stat-items {
-    padding: 0 1rem 1rem;
+.stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.4rem;
+    padding: 0.6rem 1rem;
+    min-width: 0;
+}
+
+.stat-card {
     display: flex;
     flex-direction: column;
-    gap: 0.9rem;
+    align-items: center;
+    padding: 0.6rem 0.2rem;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #edf7e2 0%, #f7fbf2 100%);
+    border: 1px solid #c3daa8;
+    min-width: 0;
+    overflow: hidden;
 }
 
-.stat-item {
-    display: flex;
-    align-items: baseline;
-    gap: 0.4rem;
-    flex-wrap: wrap;
-}
-
-.stat-label {
-    font-size: 0.9rem;
-    color: var(--color-text-muted);
-}
-
-.stat-item strong {
-    font-size: 1.25rem;
+.stat-card__value {
     font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--color-primary-dark);
+}
+
+.stat-card__label {
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+    white-space: nowrap;
 }
 
 /* ==========================================
@@ -1159,12 +1182,32 @@ a { color: var(--color-primary); }
    ========================================== */
 @media (max-width: 768px) {
     .site-header {
-        flex-direction: column;
-        text-align: center;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .header-logo {
+        height: 55px;
+    }
+
+    .header-left h1 {   
+        font-size: 1.35rem;
+    }
+
+    .header-top-row {
+        justify-content: flex-start;
+    }
+
+    .header-updated {
+        display: none;
+    }
+
+    .site-header-wrap::before {
+        display: none;
     }
 
     .dashboard__climate {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr;
     }
 
     .dashboard__main {
