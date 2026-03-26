@@ -143,7 +143,7 @@ a { color: var(--color-primary); }
 .btn--primary { background: var(--color-primary); color: #fff; }
 .btn--primary:hover { background: var(--color-primary-dark); }
 
-.btn--round { border-radius: 20px; }
+.btn--round { border-radius: var(--radius-sm); }
 .btn--small { padding: 0.35rem 0.7rem; font-size: 0.8rem; }
 .btn--full { width: 100%; }
 
@@ -223,7 +223,7 @@ a { color: var(--color-primary); }
     padding: 0.55rem 1rem;
     font-size: 1.05rem;
     font-weight: 700;
-    text-align: center;
+    text-align: left;
     color: #fff;
     letter-spacing: 0.02em;
 }
@@ -242,6 +242,33 @@ a { color: var(--color-primary); }
 
 .card__header--green {
     background: linear-gradient(135deg, #5a9a2a, #7cc940);
+}
+
+.card__header--egg {
+    background: linear-gradient(135deg, #c4943e, #e0b84a);
+}
+
+.card__header .btn {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+    margin-left: auto;
+}
+
+.card__header:has(.btn) {
+    display: flex;
+    align-items: center;
+}
+
+.card__header--red {
+    background: linear-gradient(135deg, #b54a4a, #d66b6b);
+}
+
+.card__header--note {
+    background: linear-gradient(135deg, #7a6aa0, #9b8abf);
+}
+
+.card__header--photo {
+    background: linear-gradient(135deg, #4a7fb5, #6ba3d6);
 }
 
 .card__body { padding: 1rem; }
@@ -677,7 +704,7 @@ a { color: var(--color-primary); }
 .chart-container {
     position: relative;
     height: 240px;
-    padding: 0 1rem 1rem;
+    padding: 0.5rem 1rem 1rem;
 }
 
 .chart-container canvas {
@@ -873,7 +900,8 @@ a { color: var(--color-primary); }
     list-style: none;
     max-height: 210px;
     overflow-y: auto;
-    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
 }
 
 .notes-list li {
@@ -903,6 +931,7 @@ a { color: var(--color-primary); }
 .note-form {
     display: flex;
     gap: 0.5rem;
+    padding-top: 0.5rem;
 }
 
 .note-form input {

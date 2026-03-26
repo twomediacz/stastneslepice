@@ -42,8 +42,8 @@ $todayNote = $todayEggs['note'] ?? '';
 
             <!-- Zápis vajec -->
             <div class="card">
-                <div class="card__title-row">
-                    <h2>&#x1F95A; Zápis vajec</h2>
+                <div class="card__header card__header--egg">
+                    <span>&#x1F95A; Zápis vajec</span>
                     <button type="button" id="egg-add-btn" class="btn btn--primary btn--round" onclick="App.eggs.toggleForm()">Přidat</button>
                 </div>
                 <div class="card__inner">
@@ -89,7 +89,7 @@ $todayNote = $todayEggs['note'] ?? '';
 
             <!-- Graf: Teplota & Vlhkost -->
             <div class="card">
-                <h2>&#x1F414; Teplota &amp; Vlhkost</h2>
+                <div class="card__header card__header--blue">&#x1F414; Teplota &amp; Vlhkost</div>
                 <div class="chart-container">
                     <canvas id="chart-climate"></canvas>
                 </div>
@@ -97,7 +97,7 @@ $todayNote = $todayEggs['note'] ?? '';
 
             <!-- Graf: Snáška vajec -->
             <div class="card">
-                <h2>&#x1F95A; Snáška vajec</h2>
+                <div class="card__header card__header--red">&#x1F95A; Snáška vajec</div>
                 <div class="chart-container">
                     <canvas id="chart-eggs"></canvas>
                 </div>
@@ -105,7 +105,10 @@ $todayNote = $todayEggs['note'] ?? '';
 
             <!-- Poznámky -->
             <div class="card">
-                <h2>&#x1F4DD; Poznámky</h2>
+                <div class="card__header card__header--note">
+                    <span>&#x1F4DD; Poznámky</span>
+                    <button type="button" class="btn btn--primary btn--round" id="note-add-btn">Přidat</button>
+                </div>
                 <div class="card__inner">
                     <ul id="notes-list" class="notes-list">
                         <?php foreach ($notes as $note): ?>
@@ -119,9 +122,9 @@ $todayNote = $todayEggs['note'] ?? '';
                         </li>
                         <?php endforeach; ?>
                     </ul>
-                    <form id="note-form" class="note-form">
+                    <form id="note-form" class="note-form" style="display:none">
                         <input type="text" name="content" placeholder="Nová poznámka" required>
-                        <button type="submit" class="btn btn--primary btn--round">Přidat</button>
+                        <button type="submit" class="btn btn--primary btn--round">Uložit</button>
                     </form>
                 </div>
             </div>
@@ -190,8 +193,8 @@ $todayNote = $todayEggs['note'] ?? '';
 
             <!-- Galerie fotek -->
             <div class="card">
-                <div class="card__title-row">
-                    <h2>&#x1F4F7; Fotky</h2>
+                <div class="card__header card__header--photo">
+                    <span>&#x1F4F7; Fotky</span>
                     <label class="btn btn--primary btn--round" for="photo-upload">Přidat</label>
                     <input type="file" id="photo-upload" accept="image/jpeg,image/png,image/webp" style="display:none">
                 </div>

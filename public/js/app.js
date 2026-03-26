@@ -295,9 +295,23 @@ const App = {
     notes: {
         editingId: null,
 
+        toggleForm(show) {
+            const form = document.getElementById('note-form');
+            if (!form) return;
+            if (typeof show === 'boolean') {
+                form.style.display = show ? '' : 'none';
+            } else {
+                form.style.display = form.style.display === 'none' ? '' : 'none';
+            }
+            if (form.style.display !== 'none') form.content.focus();
+        },
+
         init() {
             const form = document.getElementById('note-form');
             if (!form) return;
+
+            const addBtn = document.getElementById('note-add-btn');
+            if (addBtn) addBtn.addEventListener('click', () => App.notes.toggleForm());
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -346,6 +360,7 @@ const App = {
                     list.prepend(li);
                 }
                 form.reset();
+                App.notes.toggleForm(false);
             });
         },
 
@@ -354,6 +369,7 @@ const App = {
             const form = document.getElementById('note-form');
             if (!form) return;
             const content = li.dataset.content;
+            App.notes.toggleForm(true);
             form.content.value = content;
             form.content.focus();
             App.notes.editingId = parseInt(li.dataset.id);
