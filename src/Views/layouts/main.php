@@ -25,9 +25,15 @@
             </div>
             <?php if (\App\Core\Auth::check()): ?>
             <?php $currentPath = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH); ?>
-            <nav class="site-nav">
+            <button class="hamburger" id="hamburger-btn" aria-label="Menu" aria-expanded="false">
+                <span class="hamburger__line"></span>
+                <span class="hamburger__line"></span>
+                <span class="hamburger__line"></span>
+            </button>
+            <nav class="site-nav" id="site-nav">
                 <a href="/" class="site-nav__tab <?= ($currentPath === '/' || $currentPath === '') ? 'is-active' : '' ?>">N&aacute;stěnka</a>
                 <a href="/slepice" class="site-nav__tab <?= $currentPath === '/slepice' ? 'is-active' : '' ?>">Slepice</a>
+                <a href="/udrzba" class="site-nav__tab <?= $currentPath === '/udrzba' ? 'is-active' : '' ?>">&Uacute;držba</a>
                 <a href="/zive" class="site-nav__tab <?= $currentPath === '/zive' ? 'is-active' : '' ?>">Živě</a>
             </nav>
             <?php endif; ?>

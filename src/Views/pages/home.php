@@ -47,6 +47,15 @@ $todayNote = $todayEggs['note'] ?? '';
                     <button type="button" id="egg-add-btn" class="btn btn--primary btn--round" onclick="App.eggs.toggleForm()">Přidat</button>
                 </div>
                 <div class="card__inner">
+                    <div id="egg-form-wrap" class="egg-form-wrap" style="display:none">
+                        <form id="egg-form" class="egg-form">
+                            <input type="text" id="egg-date" name="date" value="<?= date('Y-m-d') ?>" class="egg-form__date" readonly>
+                            <input type="number" name="egg_count" placeholder="Počet" min="0" required class="egg-form__count">
+                            <input type="text" name="note" placeholder="Poznámka" class="egg-form__note">
+                            <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
+                            <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.eggs.toggleForm(false)">Zrušit</button>
+                        </form>
+                    </div>
                     <div class="egg-table-header-wrap">
                         <table class="egg-table egg-table--header">
                             <thead>
@@ -76,14 +85,6 @@ $todayNote = $todayEggs['note'] ?? '';
                             </tbody>
                         </table>
                     </div>
-                    <div id="egg-form-wrap" class="egg-form-wrap" style="display:none">
-                        <form id="egg-form" class="egg-form">
-                            <input type="text" id="egg-date" name="date" value="<?= date('Y-m-d') ?>" class="egg-form__date" readonly>
-                            <input type="number" name="egg_count" placeholder="Počet" min="0" required class="egg-form__count">
-                            <input type="text" name="note" placeholder="Poznámka" class="egg-form__note">
-                            <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
-                        </form>
-                    </div>
                 </div>
             </div>
 
@@ -107,25 +108,34 @@ $todayNote = $todayEggs['note'] ?? '';
             <div class="card">
                 <div class="card__header card__header--note">
                     <span>&#x1F4DD; Poznámky</span>
-                    <button type="button" class="btn btn--primary btn--round" id="note-add-btn">Přidat</button>
+                    <button type="button" class="btn btn--primary btn--round" onclick="App.notes.toggleForm()">Přidat</button>
                 </div>
                 <div class="card__inner">
-                    <ul id="notes-list" class="notes-list">
-                        <?php foreach ($notes as $note): ?>
-                        <li data-id="<?= $note['id'] ?>" data-content="<?= htmlspecialchars($note['content']) ?>">
-                            <strong><?= date('d.m.Y', strtotime($note['note_date'])) ?>&nbsp;</strong>
-                            <span class="note-text"><?= htmlspecialchars($note['content']) ?></span>
-                            <span class="note-actions">
-                                <button class="btn-icon" onclick="App.notes.edit(this.closest('li'))" title="Upravit">&#x270E;</button>
-                                <button class="btn-icon btn-icon--danger" onclick="App.notes.remove(<?= $note['id'] ?>)" title="Smazat">&times;</button>
-                            </span>
-                        </li>
-                        <?php endforeach; ?>
-                    </ul>
-                    <form id="note-form" class="note-form" style="display:none">
-                        <input type="text" name="content" placeholder="Nová poznámka" required>
-                        <button type="submit" class="btn btn--primary btn--round">Uložit</button>
-                    </form>
+                    <div id="note-form-wrap" class="egg-form-wrap" style="display:none">
+                        <form id="note-form" class="egg-form">
+                            <input type="hidden" name="id" value="">
+                            <input type="text" id="note-date" name="note_date" placeholder="Datum" required class="egg-form__date" readonly>
+                            <input type="text" name="content" placeholder="Poznámka" required class="egg-form__note">
+                            <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
+                            <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.notes.hideForm()">Zrušit</button>
+                        </form>
+                    </div>
+                    <div class="maintenance-table-wrap">
+                        <table class="maintenance-table">
+                            <tbody id="notes-table-body">
+                                <?php foreach ($notes as $note): ?>
+                                <tr data-id="<?= $note['id'] ?>" data-date="<?= $note['note_date'] ?>" data-content="<?= htmlspecialchars($note['content']) ?>">
+                                    <td><?= date('d.m.Y', strtotime($note['note_date'])) ?></td>
+                                    <td><?= htmlspecialchars($note['content']) ?></td>
+                                    <td class="maintenance-actions">
+                                        <button class="btn-icon" onclick="App.notes.edit(this.closest('tr'))" title="Upravit">&#x270E;</button>
+                                        <button class="btn-icon btn-icon--danger" onclick="App.notes.remove(<?= $note['id'] ?>)" title="Smazat">&times;</button>
+                                    </td>
+                                </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
@@ -179,6 +189,42 @@ $todayNote = $todayEggs['note'] ?? '';
                     <div class="stat-card">
                         <span class="stat-card__value" id="stat-avg">&#x1F95A; <?= number_format($dailyAvg, 1, ',', ' ') ?></span>
                         <span class="stat-card__label">Prům. vajec/den</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Podestýlka -->
+            <?php
+            function dnyTextHome(int $n): string {
+                $abs = abs($n);
+                if ($abs === 1) return $abs . ' den';
+                if ($abs >= 2 && $abs <= 4) return $abs . ' dny';
+                return $abs . ' dní';
+            }
+            $dbStatus = 'ok';
+            $dbDaysLeft = null;
+            if ($nextBeddingDate) {
+                $dbNow = new DateTime('today');
+                $dbNext = new DateTime($nextBeddingDate);
+                $dbDiff = (int) $dbNow->diff($dbNext)->format('%r%a');
+                $dbDaysLeft = $dbDiff;
+                if ($dbDiff < 0) $dbStatus = 'overdue';
+                elseif ($dbDiff <= 3) $dbStatus = 'warning';
+            }
+            ?>
+            <div class="card">
+                <div class="card__header card__header--maintenance">
+                    <span>Výměna podestýlky</span>
+                    <button type="button" class="btn btn--primary btn--round" onclick="App.maintenance.beddingQuickLog()">Vyměněno</button>
+                </div>
+                <div class="stat-grid2">
+                    <div class="stat-card">
+                        <span class="stat-card__value" id="dashboard-bedding-last"><?= $lastBeddingDate ? date('d.m.Y', strtotime($lastBeddingDate)) : '–' ?></span>
+                        <span class="stat-card__label">Poslední výměna</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-card__value bedding-status__value--<?= $dbStatus ?>" id="dashboard-bedding-next"><?php if ($dbDaysLeft !== null): ?><?= $dbDaysLeft < 0 ? dnyTextHome($dbDaysLeft) . ' po termínu' : ($dbDaysLeft === 0 ? 'dnes' : 'za ' . dnyTextHome($dbDaysLeft)) ?><?php else: ?>–<?php endif; ?></span>
+                        <span class="stat-card__label">Příští výměna</span>
                     </div>
                 </div>
             </div>

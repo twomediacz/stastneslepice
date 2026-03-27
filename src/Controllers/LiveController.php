@@ -16,8 +16,8 @@ class LiveController
 
         $streams = [];
         $urls = [
-            ['key' => 'youtube_livestream_url', 'label' => 'Kurník'],
-            ['key' => 'youtube_livestream_url_2', 'label' => 'Výběh'],
+            ['key' => 'youtube_livestream_url', 'label' => 'Kurník', 'color' => 'brown'],
+            ['key' => 'youtube_livestream_url_2', 'label' => 'Výběh', 'color' => 'green'],
         ];
 
         foreach ($urls as $stream) {
@@ -29,6 +29,7 @@ class LiveController
             $streams[] = [
                 'label' => $stream['label'],
                 'embedUrl' => $embedUrl,
+                'color' => $stream['color'],
             ];
         }
 

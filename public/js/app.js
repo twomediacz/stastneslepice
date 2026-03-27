@@ -109,7 +109,7 @@ const App = {
             if (!tbody) return;
 
             const date = new Date(record.record_date);
-            const dateStr = date.toLocaleDateString('cs-CZ');
+            const dateStr = App.formatDate(date);
             const noteEsc = App.escapeHtml(record.note || '');
 
             const html = `<tr data-id="${record.id}" data-date="${record.record_date}" data-count="${record.egg_count}" data-note="${noteEsc}">
@@ -274,6 +274,25 @@ const App = {
                         borderRadius: 4
                     }]
                 },
+                plugins: [{
+                    id: 'datalabels',
+                    afterDatasetsDraw(chart) {
+                        const { ctx } = chart;
+                        chart.data.datasets.forEach((dataset, i) => {
+                            const meta = chart.getDatasetMeta(i);
+                            meta.data.forEach((bar, index) => {
+                                const value = dataset.data[index];
+                                if (value == null) return;
+                                ctx.save();
+                                ctx.font = 'bold 12px ' + (ctx.font.split(' ').pop() || 'sans-serif');
+                                ctx.fillStyle = '#333';
+                                ctx.textAlign = 'center';
+                                ctx.fillText(value, bar.x, bar.y - 5);
+                                ctx.restore();
+                            });
+                        });
+                    }
+                }],
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -293,102 +312,117 @@ const App = {
 
     // --- Poznámky ---
     notes: {
-        editingId: null,
-
-        toggleForm(show) {
-            const form = document.getElementById('note-form');
-            if (!form) return;
-            if (typeof show === 'boolean') {
-                form.style.display = show ? '' : 'none';
-            } else {
-                form.style.display = form.style.display === 'none' ? '' : 'none';
-            }
-            if (form.style.display !== 'none') form.content.focus();
-        },
-
         init() {
             const form = document.getElementById('note-form');
             if (!form) return;
 
-            const addBtn = document.getElementById('note-add-btn');
-            if (addBtn) addBtn.addEventListener('click', () => App.notes.toggleForm());
+            const dateInput = document.getElementById('note-date');
+            if (dateInput && typeof flatpickr !== 'undefined') {
+                flatpickr(dateInput, {
+                    locale: 'cs',
+                    dateFormat: 'Y-m-d',
+                    defaultDate: 'today'
+                });
+            }
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const fd = new FormData(form);
+                const id = fd.get('id');
                 const content = fd.get('content').trim();
+                const noteDate = fd.get('note_date');
                 if (!content) return;
 
                 let result;
-                if (App.notes.editingId) {
-                    result = await App.api.post('/api/notes/update', {
-                        id: App.notes.editingId,
-                        content: content
-                    });
+                if (id) {
+                    result = await App.api.post('/api/notes/update', { id: parseInt(id), content, note_date: noteDate });
                 } else {
-                    result = await App.api.post('/api/notes', {
-                        content: content,
-                        note_date: new Date().toISOString().split('T')[0]
-                    });
+                    result = await App.api.post('/api/notes', { content, note_date: noteDate });
                 }
 
                 if (!result) return;
                 if (result.error) { alert(result.error); return; }
 
-                const note = result.note;
-                const list = document.getElementById('notes-list');
-
-                if (App.notes.editingId) {
-                    const li = list?.querySelector(`li[data-id="${App.notes.editingId}"]`);
-                    if (li) {
-                        li.dataset.content = note.content;
-                        li.querySelector('.note-text').textContent = note.content;
-                    }
-                    App.notes.editingId = null;
-                    form.querySelector('button[type="submit"]').textContent = 'Přidat';
-                } else if (list && note) {
-                    const d = new Date(note.note_date);
-                    const dateStr = d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric' });
-                    const li = document.createElement('li');
-                    li.dataset.id = note.id;
-                    li.dataset.content = note.content;
-                    li.innerHTML = `<strong>${dateStr}</strong> &ndash; <span class="note-text">${App.escapeHtml(note.content)}</span>
-                        <span class="note-actions">
-                            <button class="btn-icon" onclick="App.notes.edit(this.closest('li'))" title="Upravit">&#x270E;</button>
-                            <button class="btn-icon btn-icon--danger" onclick="App.notes.remove(${note.id})" title="Smazat">&times;</button>
-                        </span>`;
-                    list.prepend(li);
-                }
-                form.reset();
-                App.notes.toggleForm(false);
+                App.notes.updateTable(result.note);
+                App.notes.hideForm();
             });
         },
 
-        edit(li) {
-            if (!li) return;
+        toggleForm() {
+            const wrap = document.getElementById('note-form-wrap');
             const form = document.getElementById('note-form');
-            if (!form) return;
-            const content = li.dataset.content;
-            App.notes.toggleForm(true);
-            form.content.value = content;
+            if (!wrap) return;
+
+            const isVisible = wrap.style.display !== 'none';
+            if (isVisible) {
+                App.notes.hideForm();
+            } else {
+                form.reset();
+                form.querySelector('input[name="id"]').value = '';
+                const dateInput = document.getElementById('note-date');
+                if (dateInput && dateInput._flatpickr) {
+                    dateInput._flatpickr.setDate(new Date());
+                }
+                wrap.style.display = '';
+                form.content.focus();
+            }
+        },
+
+        hideForm() {
+            const wrap = document.getElementById('note-form-wrap');
+            const form = document.getElementById('note-form');
+            if (wrap) wrap.style.display = 'none';
+            if (form) form.reset();
+        },
+
+        edit(tr) {
+            if (!tr) return;
+            const form = document.getElementById('note-form');
+            const wrap = document.getElementById('note-form-wrap');
+            const dateInput = document.getElementById('note-date');
+            if (!form || !wrap) return;
+
+            form.querySelector('input[name="id"]').value = tr.dataset.id;
+            if (dateInput) {
+                dateInput.value = tr.dataset.date;
+                if (dateInput._flatpickr) dateInput._flatpickr.setDate(tr.dataset.date);
+            }
+            form.content.value = tr.dataset.content;
+            wrap.style.display = '';
             form.content.focus();
-            App.notes.editingId = parseInt(li.dataset.id);
-            form.querySelector('button[type="submit"]').textContent = 'Uložit';
         },
 
         async remove(id) {
             if (!confirm('Smazat poznámku?')) return;
             const result = await App.api.post('/api/notes/delete', { id });
             if (!result) return;
-            const li = document.querySelector(`#notes-list li[data-id="${id}"]`);
-            if (li) li.remove();
-            if (App.notes.editingId === id) {
-                App.notes.editingId = null;
-                const form = document.getElementById('note-form');
-                if (form) {
-                    form.reset();
-                    form.querySelector('button[type="submit"]').textContent = 'Přidat';
-                }
+            const row = document.querySelector(`#notes-table-body tr[data-id="${id}"]`);
+            if (row) row.remove();
+        },
+
+        updateTable(note) {
+            if (!note) return;
+            const tbody = document.getElementById('notes-table-body');
+            if (!tbody) return;
+
+            const d = new Date(note.note_date);
+            const dateStr = App.formatDate(d);
+            const contentEsc = App.escapeHtml(note.content);
+
+            const html = `<tr data-id="${note.id}" data-date="${note.note_date}" data-content="${contentEsc}">
+                <td>${dateStr}</td>
+                <td>${contentEsc}</td>
+                <td class="maintenance-actions">
+                    <button class="btn-icon" onclick="App.notes.edit(this.closest('tr'))" title="Upravit">&#x270E;</button>
+                    <button class="btn-icon btn-icon--danger" onclick="App.notes.remove(${note.id})" title="Smazat">&times;</button>
+                </td>
+            </tr>`;
+
+            const existingRow = tbody.querySelector(`tr[data-id="${note.id}"]`);
+            if (existingRow) {
+                existingRow.outerHTML = html;
+            } else {
+                tbody.insertAdjacentHTML('afterbegin', html);
             }
         }
     },
@@ -638,21 +672,344 @@ const App = {
         }
     },
 
+    // --- Údržba ---
+    maintenance: {
+        config: {
+            bedding: {
+                apiBase: '/api/bedding',
+                dateField: 'changed_at',
+                formId: 'bedding-form',
+                formWrapId: 'bedding-form-wrap',
+                dateInputId: 'bedding-date',
+                tbodyId: 'bedding-table-body'
+            },
+            repair: {
+                apiBase: '/api/repairs',
+                dateField: 'repaired_at',
+                formId: 'repair-form',
+                formWrapId: 'repair-form-wrap',
+                dateInputId: 'repair-date',
+                tbodyId: 'repair-table-body'
+            }
+        },
+
+        init() {
+            ['bedding', 'repair'].forEach(type => {
+                const cfg = App.maintenance.config[type];
+                const form = document.getElementById(cfg.formId);
+                if (!form) return;
+
+                const dateInput = document.getElementById(cfg.dateInputId);
+                if (dateInput && typeof flatpickr !== 'undefined') {
+                    flatpickr(dateInput, {
+                        locale: 'cs',
+                        dateFormat: 'Y-m-d',
+                        defaultDate: new Date()
+                    });
+                }
+
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const fd = new FormData(form);
+                    const id = fd.get('id');
+                    const data = {};
+                    data[cfg.dateField] = fd.get(cfg.dateField);
+                    data.note = fd.get('note') || '';
+
+                    let result;
+                    if (id) {
+                        data.id = parseInt(id);
+                        result = await App.api.post(cfg.apiBase + '/update', data);
+                    } else {
+                        result = await App.api.post(cfg.apiBase, data);
+                    }
+
+                    if (!result) return;
+                    if (result.error) { alert(result.error); return; }
+
+                    App.maintenance.updateTable(type, result.record);
+                    App.maintenance.hideForm(type);
+
+                    if (type === 'bedding') {
+                        App.maintenance.refreshBeddingStatus();
+                    }
+                });
+            });
+
+            // Interval form
+            const intervalForm = document.getElementById('bedding-interval-form');
+            if (intervalForm) {
+                intervalForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const days = parseInt(document.getElementById('bedding-interval-days').value) || 0;
+                    const result = await App.api.post('/api/bedding/interval', { interval_days: days });
+                    if (!result) return;
+                    if (result.error) { alert(result.error); return; }
+                    App.maintenance.updateBeddingStatus(result.last_change, result.next_change, result.interval_days);
+                    document.getElementById('bedding-interval-wrap').style.display = 'none';
+                });
+            }
+        },
+
+        toggleInterval() {
+            const wrap = document.getElementById('bedding-interval-wrap');
+            if (!wrap) return;
+            wrap.style.display = wrap.style.display === 'none' ? '' : 'none';
+        },
+
+        async beddingQuickLog() {
+            const result = await App.api.post('/api/bedding/quick-log', { note: 'Podestýlka vyměněna' });
+            if (!result) return;
+            if (result.error) { alert(result.error); return; }
+
+            App.maintenance.updateTable('bedding', result.record);
+            App.maintenance.updateBeddingStatus(result.record.changed_at, result.next_change, result.interval_days);
+        },
+
+        refreshBeddingStatus() {
+            // Re-calculate from the first row in the table (latest record)
+            const tbody = document.getElementById('bedding-table-body');
+            const intervalInput = document.getElementById('bedding-interval-days');
+            if (!tbody || !intervalInput) return;
+
+            const firstRow = tbody.querySelector('tr');
+            if (!firstRow) return;
+
+            const lastDatetime = firstRow.dataset.datetime;
+            const intervalDays = parseInt(intervalInput.value) || 14;
+            const lastDate = new Date(lastDatetime.replace(' ', 'T'));
+            const nextDate = new Date(lastDate);
+            nextDate.setDate(nextDate.getDate() + intervalDays);
+            const nextStr = nextDate.toISOString().split('T')[0];
+
+            App.maintenance.updateBeddingStatus(lastDatetime, nextStr, intervalDays);
+        },
+
+        updateBeddingStatus(lastChange, nextChange, intervalDays) {
+            const lastEl = document.getElementById('bedding-last-date');
+            const nextEl = document.getElementById('bedding-next-date');
+
+            if (lastEl && lastChange) {
+                const d = new Date(lastChange.replace(' ', 'T'));
+                lastEl.textContent = App.formatDateTime(d);
+            }
+
+            if (nextEl && nextChange) {
+                const next = new Date(nextChange + 'T00:00:00');
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const diffMs = next - today;
+                const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+
+                const dateStr = App.formatDate(next);
+                let label = '';
+                if (diffDays < 0) {
+                    label = ` (${App.dnyText(diffDays)} po term\u00ednu)`;
+                } else if (diffDays === 0) {
+                    label = ' (dnes)';
+                } else {
+                    label = ` (za ${App.dnyText(diffDays)})`;
+                }
+
+                nextEl.innerHTML = dateStr + ' <small>' + App.escapeHtml(label) + '</small>';
+
+                // Update CSS class
+                nextEl.classList.remove('bedding-status__value--ok', 'bedding-status__value--warning', 'bedding-status__value--overdue');
+                if (diffDays < 0) {
+                    nextEl.classList.add('bedding-status__value--overdue');
+                } else if (diffDays <= 3) {
+                    nextEl.classList.add('bedding-status__value--warning');
+                } else {
+                    nextEl.classList.add('bedding-status__value--ok');
+                }
+            }
+
+            // Also update dashboard widget if present
+            App.maintenance.updateDashboardWidget(lastChange, nextChange);
+        },
+
+        updateDashboardWidget(lastChange, nextChange) {
+            // Update last change on dashboard
+            const lastWidget = document.getElementById('dashboard-bedding-last');
+            if (lastWidget && lastChange) {
+                const d = new Date(lastChange.replace(' ', 'T'));
+                lastWidget.textContent = App.formatDate(d);
+            }
+
+            const widget = document.getElementById('dashboard-bedding-next');
+            if (!widget || !nextChange) return;
+
+            const next = new Date(nextChange + 'T00:00:00');
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const diffDays = Math.round((next - today) / (1000 * 60 * 60 * 24));
+
+            let label = '';
+            if (diffDays < 0) {
+                label = `${App.dnyText(diffDays)} po term\u00ednu`;
+            } else if (diffDays === 0) {
+                label = 'dnes';
+            } else {
+                label = `za ${App.dnyText(diffDays)}`;
+            }
+
+            widget.textContent = label;
+
+            widget.classList.remove('bedding-status__value--ok', 'bedding-status__value--warning', 'bedding-status__value--overdue');
+            if (diffDays < 0) {
+                widget.classList.add('bedding-status__value--overdue');
+            } else if (diffDays <= 3) {
+                widget.classList.add('bedding-status__value--warning');
+            } else {
+                widget.classList.add('bedding-status__value--ok');
+            }
+        },
+
+        toggleForm(type) {
+            const cfg = App.maintenance.config[type];
+            const wrap = document.getElementById(cfg.formWrapId);
+            const form = document.getElementById(cfg.formId);
+            if (!wrap) return;
+
+            const isVisible = wrap.style.display !== 'none';
+            if (isVisible) {
+                App.maintenance.hideForm(type);
+            } else {
+                form.reset();
+                form.querySelector('input[name="id"]').value = '';
+                const dateInput = document.getElementById(cfg.dateInputId);
+                if (dateInput && dateInput._flatpickr) {
+                    dateInput._flatpickr.setDate(new Date());
+                }
+                form.querySelector('button[type="submit"]').textContent = 'Uložit';
+                wrap.style.display = '';
+            }
+        },
+
+        hideForm(type) {
+            const cfg = App.maintenance.config[type];
+            const wrap = document.getElementById(cfg.formWrapId);
+            const form = document.getElementById(cfg.formId);
+            if (wrap) wrap.style.display = 'none';
+            if (form) form.reset();
+        },
+
+        edit(type, tr) {
+            if (!tr) return;
+            const cfg = App.maintenance.config[type];
+            const form = document.getElementById(cfg.formId);
+            const wrap = document.getElementById(cfg.formWrapId);
+            const dateInput = document.getElementById(cfg.dateInputId);
+            if (!form || !wrap) return;
+
+            form.querySelector('input[name="id"]').value = tr.dataset.id;
+            dateInput.value = tr.dataset.datetime;
+            if (dateInput._flatpickr) dateInput._flatpickr.setDate(tr.dataset.datetime);
+            form.querySelector('input[name="note"]').value = tr.dataset.note;
+            form.querySelector('button[type="submit"]').textContent = 'Uložit';
+            wrap.style.display = '';
+        },
+
+        async remove(type, id) {
+            if (!confirm('Smazat záznam?')) return;
+            const cfg = App.maintenance.config[type];
+            const result = await App.api.post(cfg.apiBase + '/delete', { id });
+            if (!result || result.error) return;
+
+            const row = document.querySelector(`#${cfg.tbodyId} tr[data-id="${id}"]`);
+            if (row) row.remove();
+
+            if (type === 'bedding') {
+                App.maintenance.refreshBeddingStatus();
+            }
+        },
+
+        updateTable(type, record) {
+            if (!record) return;
+            const cfg = App.maintenance.config[type];
+            const tbody = document.getElementById(cfg.tbodyId);
+            if (!tbody) return;
+
+            const datetime = record[cfg.dateField];
+            const d = new Date(datetime.replace(' ', 'T'));
+            const dateStr = App.formatDate(d);
+            const noteEsc = App.escapeHtml(record.note || '');
+
+            const html = `<tr data-id="${record.id}" data-datetime="${datetime}" data-note="${noteEsc}">
+                <td>${dateStr}</td>
+                <td>${noteEsc}</td>
+                <td class="maintenance-actions">
+                    <button class="btn-icon" onclick="App.maintenance.edit('${type}', this.closest('tr'))" title="Upravit">&#x270E;</button>
+                    <button class="btn-icon btn-icon--danger" onclick="App.maintenance.remove('${type}', ${record.id})" title="Smazat">&times;</button>
+                </td>
+            </tr>`;
+
+            const existingRow = tbody.querySelector(`tr[data-id="${record.id}"]`);
+            if (existingRow) {
+                existingRow.outerHTML = html;
+            } else {
+                tbody.insertAdjacentHTML('afterbegin', html);
+            }
+        }
+    },
+
     // --- Helpers ---
+    dnyText(n) {
+        const abs = Math.abs(n);
+        if (abs === 1) return abs + ' den';
+        if (abs >= 2 && abs <= 4) return abs + ' dny';
+        return abs + ' dn\u00ed';
+    },
+
+    pad(n) { return n < 10 ? '0' + n : '' + n; },
+
+    formatDate(d) {
+        return App.pad(d.getDate()) + '.' + App.pad(d.getMonth() + 1) + '.' + d.getFullYear();
+    },
+
+    formatDateTime(d) {
+        return App.formatDate(d) + ' ' + App.pad(d.getHours()) + ':' + App.pad(d.getMinutes());
+    },
+
     escapeHtml(str) {
         const div = document.createElement('div');
         div.textContent = str;
         return div.innerHTML;
     },
 
+    // --- Hamburger menu ---
+    hamburger: {
+        init() {
+            const btn = document.getElementById('hamburger-btn');
+            const nav = document.getElementById('site-nav');
+            if (!btn || !nav) return;
+
+            btn.addEventListener('click', () => {
+                const isOpen = nav.classList.toggle('is-open');
+                btn.classList.toggle('is-open', isOpen);
+                btn.setAttribute('aria-expanded', isOpen);
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!btn.contains(e.target) && !nav.contains(e.target)) {
+                    nav.classList.remove('is-open');
+                    btn.classList.remove('is-open');
+                    btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+        }
+    },
+
     // --- Init ---
     init() {
+        App.hamburger.init();
         App.eggs.init();
         App.charts.init();
         App.notes.init();
         App.gallery.init();
         App.weather.init();
         App.chickens.init();
+        App.maintenance.init();
     }
 };
 

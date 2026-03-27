@@ -1,7 +1,7 @@
 <div class="live-page">
     <?php foreach ($streams as $stream): ?>
     <div class="live-card card">
-        <h2>&#x1F4F9; <?= htmlspecialchars($stream['label']) ?></h2>
+        <div class="card__header card__header--<?= $stream['color'] ?>">&#x1F4F9; <?= htmlspecialchars($stream['label']) ?></div>
         <div class="card__inner">
             <div class="live-video">
                 <?php if ($stream['embedUrl']): ?>

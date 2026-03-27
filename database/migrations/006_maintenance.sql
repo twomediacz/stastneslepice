@@ -1,0 +1,15 @@
+-- Údržba: Výměna podestýlky
+CREATE TABLE IF NOT EXISTS bedding_changes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    changed_at DATETIME NOT NULL,
+    note TEXT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;
+
+-- Údržba: Opravy
+CREATE TABLE IF NOT EXISTS repairs (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    repaired_at DATETIME NOT NULL,
+    note TEXT DEFAULT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_czech_ci;

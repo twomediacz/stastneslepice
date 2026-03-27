@@ -19,6 +19,8 @@ use App\Controllers\Api\SettingController;
 use App\Controllers\Api\WeatherController;
 use App\Controllers\ChickensController;
 use App\Controllers\LiveController;
+use App\Controllers\MaintenanceController as MaintenancePageController;
+use App\Controllers\Api\MaintenanceController;
 use App\Controllers\Api\ChickenController;
 
 $app = new App();
@@ -34,6 +36,7 @@ $router->get('/logout', [AuthController::class, 'logout']);
 // Stránky (vyžadují přihlášení – řeší controllery)
 $router->get('/', [HomeController::class, 'index']);
 $router->get('/slepice', [ChickensController::class, 'index']);
+$router->get('/udrzba', [MaintenancePageController::class, 'index']);
 $router->get('/zive', [LiveController::class, 'index']);
 
 // API – vejce
@@ -70,5 +73,19 @@ $router->post('/api/chickens', [ChickenController::class, 'store']);
 $router->post('/api/chickens/update', [ChickenController::class, 'update']);
 $router->post('/api/chickens/photo', [ChickenController::class, 'uploadPhoto']);
 $router->post('/api/chickens/delete', [ChickenController::class, 'destroy']);
+
+// API – údržba (podestýlka)
+$router->get('/api/bedding', [MaintenanceController::class, 'beddingIndex']);
+$router->post('/api/bedding', [MaintenanceController::class, 'beddingStore']);
+$router->post('/api/bedding/update', [MaintenanceController::class, 'beddingUpdate']);
+$router->post('/api/bedding/delete', [MaintenanceController::class, 'beddingDestroy']);
+$router->post('/api/bedding/interval', [MaintenanceController::class, 'beddingInterval']);
+$router->post('/api/bedding/quick-log', [MaintenanceController::class, 'beddingQuickLog']);
+
+// API – údržba (opravy)
+$router->get('/api/repairs', [MaintenanceController::class, 'repairIndex']);
+$router->post('/api/repairs', [MaintenanceController::class, 'repairStore']);
+$router->post('/api/repairs/update', [MaintenanceController::class, 'repairUpdate']);
+$router->post('/api/repairs/delete', [MaintenanceController::class, 'repairDestroy']);
 
 $app->run();

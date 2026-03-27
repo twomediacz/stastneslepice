@@ -49,7 +49,12 @@ class NoteController extends Controller
             $this->jsonError('Poznámka nemůže být prázdná.');
         }
 
-        Note::update($id, ['content' => $content]);
+        $updateData = ['content' => $content];
+        $noteDate = trim($data['note_date'] ?? '');
+        if ($noteDate !== '') {
+            $updateData['note_date'] = $noteDate;
+        }
+        Note::update($id, $updateData);
         $this->json([
             'success' => true,
             'note' => Note::findById($id),
