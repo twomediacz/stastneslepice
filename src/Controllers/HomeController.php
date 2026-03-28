@@ -11,13 +11,12 @@ use App\Models\Chicken;
 use App\Models\Note;
 use App\Models\Photo;
 use App\Models\BeddingChange;
+use App\Models\TextSnippet;
 
 class HomeController
 {
     public function index(): void
     {
-        Auth::requireAuth();
-
         $settings = Setting::getAll();
         $todayEggs = EggRecord::getByDate(date('Y-m-d'));
         $recentEggs = EggRecord::getRecent(14);
@@ -28,6 +27,8 @@ class HomeController
         $chickenCount = Chicken::getCount();
         $recentNotes = Note::getRecent(10);
         $photos = Photo::getAll(12);
+
+        $randomJoke = TextSnippet::getRandom('joke');
 
         $intervalDays = (int) ($settings['bedding_interval_days'] ?? 14);
         $lastBedding = BeddingChange::getLatest();
@@ -50,6 +51,7 @@ class HomeController
             'photos' => $photos,
             'lastBeddingDate' => $lastBeddingDate,
             'nextBeddingDate' => $nextBeddingDate,
+            'randomJoke' => $randomJoke,
         ]);
     }
 }

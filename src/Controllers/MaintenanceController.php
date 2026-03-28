@@ -12,8 +12,6 @@ class MaintenanceController
 {
     public function index(): void
     {
-        Auth::requireAuth();
-
         $beddingChanges = BeddingChange::getAll();
         $repairs = Repair::getAll();
         $intervalDays = (int) (Setting::get('bedding_interval_days') ?? 14);

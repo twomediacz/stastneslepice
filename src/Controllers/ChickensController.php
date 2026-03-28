@@ -10,8 +10,6 @@ class ChickensController
 {
     public function index(): void
     {
-        Auth::requireAuth();
-
         $chickens = Chicken::getAll();
         $counts = Chicken::getCount();
 

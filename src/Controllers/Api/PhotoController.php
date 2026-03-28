@@ -14,7 +14,6 @@ class PhotoController extends Controller
 
     public function index(): void
     {
-        Auth::requireAuthApi();
         $limit = (int) ($_GET['limit'] ?? 50);
         $this->json(['photos' => Photo::getAll($limit)]);
     }

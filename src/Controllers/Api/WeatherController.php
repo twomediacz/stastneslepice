@@ -17,8 +17,6 @@ class WeatherController extends Controller
 
     public function forecast(): void
     {
-        Auth::requireAuthApi();
-
         // Zkusit cache
         if (file_exists(self::CACHE_FILE) && (time() - filemtime(self::CACHE_FILE)) < self::CACHE_TTL) {
             $cached = json_decode(file_get_contents(self::CACHE_FILE), true);

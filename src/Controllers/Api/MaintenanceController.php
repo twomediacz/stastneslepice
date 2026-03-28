@@ -14,7 +14,6 @@ class MaintenanceController extends Controller
 
     public function beddingIndex(): void
     {
-        Auth::requireAuthApi();
         $this->json(['records' => BeddingChange::getAll()]);
     }
 
@@ -135,7 +134,6 @@ class MaintenanceController extends Controller
 
     public function repairIndex(): void
     {
-        Auth::requireAuthApi();
         $this->json(['records' => Repair::getAll()]);
     }
 

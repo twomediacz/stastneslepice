@@ -10,7 +10,20 @@ class EggController extends Controller
 {
     public function index(): void
     {
-        Auth::requireAuthApi();
+        $group = $_GET['group'] ?? null;
+
+        if ($group === 'month') {
+            $months = (int) ($_GET['months'] ?? 12);
+            $records = EggRecord::getMonthlyAggregated($months);
+            $this->json([
+                'records' => $records,
+                'grouped' => 'month',
+                'total' => EggRecord::getTotalEggs(),
+                'average' => EggRecord::getDailyAverage(),
+            ]);
+            return;
+        }
+
         $days = (int) ($_GET['days'] ?? 14);
         $records = EggRecord::getRecent($days);
         $this->json([

@@ -8,10 +8,20 @@ use App\Models\Setting;
 
 class SettingController extends Controller
 {
+    private const SENSITIVE_KEYS = ['weather_api_key', 'climate_api_token'];
+
     public function index(): void
     {
-        Auth::requireAuthApi();
-        $this->json(['settings' => Setting::getAll()]);
+        $settings = Setting::getAll();
+
+        // Skrýt citlivá nastavení pro nepřihlášené
+        if (!Auth::check()) {
+            foreach (self::SENSITIVE_KEYS as $key) {
+                unset($settings[$key]);
+            }
+        }
+
+        $this->json(['settings' => $settings]);
     }
 
     public function update(): void

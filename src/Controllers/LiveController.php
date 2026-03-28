@@ -10,8 +10,6 @@ class LiveController
 {
     public function index(): void
     {
-        Auth::requireAuth();
-
         $settings = Setting::getAll();
 
         $streams = [];

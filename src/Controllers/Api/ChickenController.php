@@ -10,7 +10,6 @@ class ChickenController extends Controller
 {
     public function index(): void
     {
-        Auth::requireAuthApi();
         $this->json([
             'chickens' => Chicken::getAll(),
             'counts' => Chicken::getCount(),
@@ -34,6 +33,7 @@ class ChickenController extends Controller
             'color' => trim($data['color'] ?? '') ?: null,
             'birth_date' => $data['birth_date'] ?: null,
             'acquired_date' => $data['acquired_date'] ?: null,
+            'end_date' => $data['end_date'] ?: null,
             'status' => $data['status'] ?? 'active',
             'note' => trim($data['note'] ?? '') ?: null,
         ];
@@ -66,6 +66,7 @@ class ChickenController extends Controller
             'color' => trim($data['color'] ?? '') ?: null,
             'birth_date' => $data['birth_date'] ?: null,
             'acquired_date' => $data['acquired_date'] ?: null,
+            'end_date' => $data['end_date'] ?: null,
             'status' => $data['status'] ?? 'active',
             'note' => trim($data['note'] ?? '') ?: null,
         ];

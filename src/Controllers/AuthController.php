@@ -46,51 +46,10 @@ class AuthController
         exit;
     }
 
-    public function showRegister(): void
-    {
-        if (Auth::check()) {
-            header('Location: /');
-            exit;
-        }
-        View::render('register', ['title' => 'Registrace']);
-    }
-
-    public function register(): void
-    {
-        $username = trim($_POST['username'] ?? '');
-        $password = $_POST['password'] ?? '';
-        $passwordConfirm = $_POST['password_confirm'] ?? '';
-
-        $error = null;
-        if ($username === '' || $password === '') {
-            $error = 'Vyplňte všechna pole.';
-        } elseif (strlen($password) < 6) {
-            $error = 'Heslo musí mít alespoň 6 znaků.';
-        } elseif ($password !== $passwordConfirm) {
-            $error = 'Hesla se neshodují.';
-        } elseif (User::findByUsername($username)) {
-            $error = 'Uživatelské jméno je již obsazené.';
-        }
-
-        if ($error) {
-            View::render('register', [
-                'title' => 'Registrace',
-                'error' => $error,
-                'username' => $username,
-            ]);
-            return;
-        }
-
-        $userId = User::create($username, $password);
-        Auth::login($userId, $username, 'admin');
-        header('Location: /');
-        exit;
-    }
-
     public function logout(): void
     {
         Auth::logout();
-        header('Location: /login');
+        header('Location: /');
         exit;
     }
 }

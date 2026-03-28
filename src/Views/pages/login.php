@@ -20,6 +20,5 @@
             <button type="submit" class="btn btn--primary btn--full">Přihlásit se</button>
         </form>
 
-        <p class="auth-link">Nemáte účet? <a href="/register">Zaregistrujte se</a></p>
     </div>
 </section>

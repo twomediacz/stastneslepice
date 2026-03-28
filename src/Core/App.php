@@ -13,6 +13,9 @@ class App
         date_default_timezone_set($this->config['app']['timezone']);
 
         if (session_status() === PHP_SESSION_NONE) {
+            $lifetime = 365 * 24 * 60 * 60; // 1 rok
+            ini_set('session.gc_maxlifetime', $lifetime);
+            session_set_cookie_params($lifetime);
             session_start();
         }
 

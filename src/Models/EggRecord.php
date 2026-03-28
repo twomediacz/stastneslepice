@@ -35,6 +35,19 @@ class EggRecord extends Model
         return round((float) $result['avg_eggs'], 1);
     }
 
+    public static function getMonthlyAggregated(int $months = 12): array
+    {
+        return static::query(
+            "SELECT DATE_FORMAT(record_date, '%Y-%m') AS month,
+                    SUM(egg_count) AS egg_count
+             FROM egg_records
+             WHERE record_date >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)
+             GROUP BY DATE_FORMAT(record_date, '%Y-%m')
+             ORDER BY month ASC",
+            [$months]
+        );
+    }
+
     public static function upsert(string $date, int $count, ?string $note): void
     {
         $stmt = static::db()->prepare(

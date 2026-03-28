@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS chickens (
     color VARCHAR(100) DEFAULT NULL,
     birth_date DATE DEFAULT NULL,
     acquired_date DATE DEFAULT NULL,
+    end_date DATE DEFAULT NULL,
     status ENUM('active', 'sick', 'deceased', 'given_away') NOT NULL DEFAULT 'active',
     photo VARCHAR(255) DEFAULT NULL,
     note TEXT DEFAULT NULL,

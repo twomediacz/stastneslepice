@@ -12,6 +12,9 @@ $config = [
         'timezone' => 'Europe/Prague',
         'debug' => false,
     ],
+    'api' => [
+        'climate_key' => '', // Nastavte v config.local.php
+    ],
     'db' => [
         'host' => '127.0.0.1',
         'port' => 3306,

@@ -7,7 +7,7 @@ CREATE DATABASE IF NOT EXISTS stastneslepice
 
 USE stastneslepice;
 
--- Denní zápis snášky vajec
+-- Denní zápis snůšky vajec
 CREATE TABLE IF NOT EXISTS egg_records (
     id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
     record_date DATE NOT NULL UNIQUE,

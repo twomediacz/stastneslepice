@@ -44,7 +44,7 @@ class Chicken extends Model
             'active' => '#5a9a2a',
             'sick' => '#e8a020',
             'deceased' => '#999',
-            'given_away' => '#7a8fa5',
+            'given_away' => '#60c7ff',
             default => '#777',
         };
     }
