@@ -11,7 +11,7 @@ class AlmanachController
         $sections = require __DIR__ . '/../../data/almanach.php';
 
         View::render('almanach', [
-            'title' => 'Almanach – Rady pro chov slepic',
+            'title' => 'Chov slepic – Doloplazy – Almanach',
             'sections' => $sections,
         ]);
     }
@@ -21,7 +21,7 @@ class AlmanachController
         $data = require __DIR__ . '/../../data/almanach_pokrocily.php';
 
         View::render('almanach_pokrocily', [
-            'title' => $data['title'],
+            'title' => 'Chov slepic – Doloplazy – Almanach',
             'subtitle' => $data['subtitle'],
             'footer' => $data['footer'],
             'sections' => $data['sections'],

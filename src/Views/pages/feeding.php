@@ -151,7 +151,7 @@
             <!-- Nákupy krmiva -->
             <div class="card">
                 <div class="card__header card__header--feeding-purchase">
-                    <span>&#x1F6D2; Nákupy krmiva</span>
+                    <span>&#x1F6CD; Nákupy krmiva</span>
                     <button type="button" class="btn btn--primary btn--round" onclick="App.feeding.toggleForm('purchase')">Přidat</button>
                 </div>
                 <div class="card__inner">
@@ -225,19 +225,19 @@
 
             <!-- Přehled statistik -->
             <div class="card">
-                <div class="card__header card__header--feeding">&#x1F4CA; Přehled</div>
+                <div class="card__header card__header--feeding">&#x1F4CA; Přehled (za 30 dní)</div>
                 <div class="stat-grid">
                     <div class="stat-card stat-card--feeding">
                         <span class="stat-card__value" id="stat-total-kg"><?= number_format($totalKgMonth, 1, ',', ' ') ?> kg</span>
-                        <span class="stat-card__label">Spotřeba (30 dní)</span>
+                        <span class="stat-card__label">Spotřeba</span>
                     </div>
                     <div class="stat-card stat-card--feeding">
                         <span class="stat-card__value" id="stat-total-cost"><?= number_format($totalCostMonth, 0, ',', ' ') ?> Kč</span>
-                        <span class="stat-card__label">Náklady (30 dní)</span>
+                        <span class="stat-card__label">Náklady</span>
                     </div>
                     <div class="stat-card stat-card--feeding">
-                        <span class="stat-card__value" id="stat-daily-avg"><?= number_format($dailyAvg, 2, ',', ' ') ?> kg</span>
-                        <span class="stat-card__label">Průměr/den</span>
+                        <span class="stat-card__value" id="stat-daily-avg"><?= number_format($dailyAvg, 1, ',', ' ') ?> kg</span>
+                        <span class="stat-card__label">Průměr / den</span>
                     </div>
                 </div>
             </div>
@@ -245,7 +245,7 @@
             <!-- Graf spotřeby -->
             <div class="card">
                 <div class="card__header card__header--red">
-                    <span>&#x1F4C9; Spotřeba krmiva</span>
+                    <span>&#x1F4C9; Spotřeba</span>
                     <div class="period-toggle" id="consumption-period-toggle">
                         <button class="period-toggle__btn is-active" data-period="week">Týden</button>
                         <button class="period-toggle__btn" data-period="month">Měsíc</button>
@@ -262,7 +262,7 @@
             <!-- Graf nákladů -->
             <div class="card">
                 <div class="card__header card__header--feeding-cost">
-                    <span>&#x1F4B0; Náklady na krmivo</span>
+                    <span>&#x1F4B0; Náklady</span>
                     <div class="period-toggle" id="cost-period-toggle">
                         <button class="period-toggle__btn" data-period="6">6 měsíců</button>
                         <button class="period-toggle__btn is-active" data-period="12">Rok</button>

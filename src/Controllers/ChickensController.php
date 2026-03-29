@@ -14,7 +14,7 @@ class ChickensController
         $counts = Chicken::getCount();
 
         View::render('chickens', [
-            'title' => 'Slepice – Evidence',
+            'title' => 'Chov slepic – Doloplazy – Slepice',
             'chickens' => $chickens,
             'counts' => $counts,
         ]);

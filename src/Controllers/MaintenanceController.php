@@ -23,7 +23,7 @@ class MaintenanceController
             : null;
 
         View::render('maintenance', [
-            'title' => 'Údržba',
+            'title' => 'Chov slepic – Doloplazy – Údržba',
             'beddingChanges' => $beddingChanges,
             'repairs' => $repairs,
             'intervalDays' => $intervalDays,

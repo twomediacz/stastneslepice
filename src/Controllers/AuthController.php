@@ -14,7 +14,7 @@ class AuthController
             header('Location: /');
             exit;
         }
-        View::render('login', ['title' => 'Přihlášení']);
+        View::render('login', ['title' => 'Chov slepic – Doloplazy – Přihlášení']);
     }
 
     public function login(): void
@@ -24,7 +24,7 @@ class AuthController
 
         if ($username === '' || $password === '') {
             View::render('login', [
-                'title' => 'Přihlášení',
+                'title' => 'Chov slepic – Doloplazy – Přihlášení',
                 'error' => 'Vyplňte uživatelské jméno a heslo.',
                 'username' => $username,
             ]);
@@ -34,7 +34,7 @@ class AuthController
         $user = User::findByUsername($username);
         if (!$user || !password_verify($password, $user['password_hash'])) {
             View::render('login', [
-                'title' => 'Přihlášení',
+                'title' => 'Chov slepic – Doloplazy – Přihlášení',
                 'error' => 'Nesprávné přihlašovací údaje.',
                 'username' => $username,
             ]);

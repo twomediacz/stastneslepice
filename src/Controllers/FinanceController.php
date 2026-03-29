@@ -43,7 +43,7 @@ class FinanceController
         $expensesByCategory = Expense::getTotalByCategory(12);
 
         View::render('finance', [
-            'title' => 'Finance',
+            'title' => 'Chov slepic – Doloplazy – Finance',
             'expenses' => $expenses,
             'eggTransactions' => $eggTransactions,
             'feedCosts' => $feedCosts,

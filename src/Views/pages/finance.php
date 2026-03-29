@@ -71,7 +71,7 @@
             <!-- Prodej / darování vajec -->
             <div class="card">
                 <div class="card__header card__header--finance-revenue">
-                    <span>&#x1F95A; Prodej / darování vajec</span>
+                    <span>&#x1F95A; Prodej vajec</span>
                     <button type="button" class="btn btn--primary btn--round" onclick="App.finance.toggleForm('egg-tx')">Přidat</button>
                 </div>
                 <div class="card__inner">
@@ -156,7 +156,7 @@
 
             <!-- Přehled -->
             <div class="card">
-                <div class="card__header card__header--finance">&#x1F4B0; Finance &ndash; Přehled (12 měsíců)</div>
+                <div class="card__header card__header--finance">&#x1F4B0; Přehled (za 12 měsíců)</div>
                 <div class="stat-grid2">
                     <div class="stat-card stat-card--finance-expense">
                         <span class="stat-card__value" id="fin-total-costs"><?= number_format($totalCosts, 0, ',', ' ') ?> Kč</span>
@@ -231,7 +231,7 @@
 
             <!-- Celková bilance -->
             <div class="card">
-                <div class="card__header card__header--finance-balance">&#x2696;&#xFE0F; Celková bilance (12 měsíců)</div>
+                <div class="card__header card__header--finance-balance">&#x2696;&#xFE0F; Bilance (za 12 měsíců)</div>
                 <div class="card__inner">
                     <div class="balance-table">
                         <div class="balance-row balance-row--expense">

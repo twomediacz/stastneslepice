@@ -15,7 +15,7 @@ class UsersController
         $users = User::getAll();
 
         View::render('users', [
-            'title' => 'Správa uživatelů',
+            'title' => 'Chov slepic – Doloplazy – Uživatelé',
             'users' => $users,
         ]);
     }

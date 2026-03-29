@@ -214,23 +214,30 @@ const App = {
                     {
                         label: 'Teplota kurník (°C)',
                         data: coopData.map(r => r.temperature),
-                        borderColor: '#e74c3c',
-                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        borderColor: '#b87949',
+                        backgroundColor: 'rgba(184, 121, 73, 0.1)',
+                        tension: 0.3, yAxisID: 'y'
+                    },
+                    {
+                        label: 'Teplota venku (°C)',
+                        data: outdoorData.map(r => r.temperature),
+                        borderColor: '#5ab19f',
+                        backgroundColor: 'rgba(90, 177, 159, 0.1)',
                         tension: 0.3, yAxisID: 'y'
                     },
                     {
                         label: 'Vlhkost kurník (%)',
                         data: coopData.map(r => r.humidity),
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
-                        tension: 0.3, yAxisID: 'y1'
+                        borderColor: '#b87949',
+                        backgroundColor: 'rgba(184, 121, 73, 0.1)',
+                        tension: 0.3, borderDash: [5, 5], yAxisID: 'y1'
                     },
                     {
-                        label: 'Teplota venku (°C)',
-                        data: outdoorData.map(r => r.temperature),
-                        borderColor: '#e67e22',
-                        backgroundColor: 'rgba(230, 126, 34, 0.1)',
-                        tension: 0.3, borderDash: [5, 5], yAxisID: 'y'
+                        label: 'Vlhkost venku (%)',
+                        data: outdoorData.map(r => r.humidity),
+                        borderColor: '#5ab19f',
+                        backgroundColor: 'rgba(90, 177, 159, 0.1)',
+                        tension: 0.3, borderDash: [5, 5], yAxisID: 'y1'
                     }
                 ];
             } else {
@@ -268,44 +275,58 @@ const App = {
                     {
                         label: 'Teplota kurník (°C)',
                         data: coopData.map(r => parseFloat(r.temp_max)),
-                        borderColor: '#e74c3c',
-                        backgroundColor: 'rgba(231, 76, 60, 0.15)',
+                        borderColor: '#b87949',
+                        backgroundColor: 'rgba(184, 121, 73, 0.15)',
                         fill: '+1', tension: 0.3, yAxisID: 'y', ...maxLine
                     },
                     {
                         label: '_coopTempMin',
                         data: coopData.map(r => parseFloat(r.temp_min)),
-                        borderColor: '#e74c3c',
-                        backgroundColor: 'rgba(231, 76, 60, 0.15)',
+                        borderColor: '#b87949',
+                        backgroundColor: 'rgba(184, 121, 73, 0.15)',
+                        fill: false, tension: 0.3, yAxisID: 'y', ...minLine
+                    },
+                    {
+                        label: 'Teplota venku (°C)',
+                        data: outdoorData.map(r => parseFloat(r.temp_max)),
+                        borderColor: '#5ab19f',
+                        backgroundColor: 'rgba(90, 177, 159, 0.15)',
+                        fill: '+1', tension: 0.3, yAxisID: 'y', ...maxLine
+                    },
+                    {
+                        label: '_outTempMin',
+                        data: outdoorData.map(r => parseFloat(r.temp_min)),
+                        borderColor: '#5ab19f',
+                        backgroundColor: 'rgba(90, 177, 159, 0.15)',
                         fill: false, tension: 0.3, yAxisID: 'y', ...minLine
                     },
                     {
                         label: 'Vlhkost kurník (%)',
                         data: coopData.map(r => parseFloat(r.hum_max)),
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.15)',
-                        fill: '+1', tension: 0.3, yAxisID: 'y1', ...maxLine
+                        borderColor: '#b87949',
+                        backgroundColor: 'rgba(184, 121, 73, 0.15)',
+                        fill: '+1', tension: 0.3, borderDash: [5, 5], yAxisID: 'y1', ...maxLine
                     },
                     {
                         label: '_coopHumMin',
                         data: coopData.map(r => parseFloat(r.hum_min)),
-                        borderColor: '#3498db',
-                        backgroundColor: 'rgba(52, 152, 219, 0.15)',
+                        borderColor: '#b87949',
+                        backgroundColor: 'rgba(184, 121, 73, 0.15)',
                         fill: false, tension: 0.3, yAxisID: 'y1', ...minLine
                     },
                     {
-                        label: 'Teplota venku (°C)',
-                        data: outdoorData.map(r => parseFloat(r.temp_max)),
-                        borderColor: '#e67e22',
-                        backgroundColor: 'rgba(230, 126, 34, 0.15)',
-                        fill: '+1', tension: 0.3, borderDash: [5, 5], yAxisID: 'y', ...maxLine
+                        label: 'Vlhkost venku (%)',
+                        data: outdoorData.map(r => parseFloat(r.hum_max)),
+                        borderColor: '#5ab19f',
+                        backgroundColor: 'rgba(90, 177, 159, 0.15)',
+                        fill: '+1', tension: 0.3, borderDash: [5, 5], yAxisID: 'y1', ...maxLine
                     },
                     {
-                        label: '_outTempMin',
-                        data: outdoorData.map(r => parseFloat(r.temp_min)),
-                        borderColor: '#e67e22',
-                        backgroundColor: 'rgba(230, 126, 34, 0.15)',
-                        fill: false, tension: 0.3, yAxisID: 'y', ...minLine
+                        label: '_outHumMin',
+                        data: outdoorData.map(r => parseFloat(r.hum_min)),
+                        borderColor: '#5ab19f',
+                        backgroundColor: 'rgba(90, 177, 159, 0.15)',
+                        fill: false, tension: 0.3, yAxisID: 'y1', ...minLine
                     }
                 ];
             }
@@ -395,10 +416,16 @@ const App = {
                     datasets: [{
                         label: 'Počet vajec',
                         data: values,
-                        backgroundColor: records.map((_, i) => {
-                            const colors = ['#e74c3c', '#e67e22', '#f1c40f', '#2ecc71', '#3498db', '#9b59b6'];
-                            return colors[i % colors.length];
-                        }),
+                        backgroundColor: (() => {
+                            const max = Math.max(...values);
+                            const min = Math.min(...values);
+                            return values.map(v => {
+                                if (max === min) return '#3498db';
+                                if (v === max) return '#2ecc71';
+                                if (v === min) return '#e74c3c';
+                                return '#3498db';
+                            });
+                        })(),
                         borderRadius: 4
                     }]
                 },
@@ -2089,9 +2116,26 @@ const App = {
         }
     },
 
+    // --- Scroll to top ---
+    scrollTop: {
+        init() {
+            const btn = document.getElementById('scroll-top-btn');
+            if (!btn) return;
+
+            window.addEventListener('scroll', () => {
+                btn.classList.toggle('is-visible', window.scrollY > 300);
+            }, { passive: true });
+
+            btn.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+    },
+
     // --- Init ---
     init() {
         App.hamburger.init();
+        App.scrollTop.init();
         App.eggs.init();
         App.charts.init();
         App.notes.init();

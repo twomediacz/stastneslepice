@@ -93,6 +93,21 @@ $isLoggedIn = \App\Core\Auth::check();
                 </div>
             </div>
 
+            <!-- Graf: Snůška vajec -->
+            <div class="card">
+                <div class="card__header card__header--red">
+                    <span>&#x1F95A; Snůška</span>
+                    <div class="period-toggle" id="eggs-period-toggle">
+                        <button class="period-toggle__btn period-toggle__btn--active" data-period="week">Týden</button>
+                        <button class="period-toggle__btn" data-period="month">Měsíc</button>
+                        <button class="period-toggle__btn" data-period="year">Rok</button>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chart-eggs"></canvas>
+                </div>
+            </div>
+
             <!-- Graf: Teplota & Vlhkost -->
             <div class="card">
                 <div class="card__header card__header--blue">
@@ -106,21 +121,6 @@ $isLoggedIn = \App\Core\Auth::check();
                 </div>
                 <div class="chart-container">
                     <canvas id="chart-climate"></canvas>
-                </div>
-            </div>
-
-            <!-- Graf: Snůška vajec -->
-            <div class="card">
-                <div class="card__header card__header--red">
-                    <span>&#x1F95A; Snůška vajec</span>
-                    <div class="period-toggle" id="eggs-period-toggle">
-                        <button class="period-toggle__btn period-toggle__btn--active" data-period="week">Týden</button>
-                        <button class="period-toggle__btn" data-period="month">Měsíc</button>
-                        <button class="period-toggle__btn" data-period="year">Rok</button>
-                    </div>
-                </div>
-                <div class="chart-container">
-                    <canvas id="chart-eggs"></canvas>
                 </div>
             </div>
 
@@ -172,6 +172,25 @@ $isLoggedIn = \App\Core\Auth::check();
         <!-- PRAVÝ SLOUPEC -->
         <div class="dashboard__right">
 
+            <!-- Statistiky -->
+            <div class="card">
+                <div class="card__header card__header--green">&#x1F522; Statistika</div>
+                <div class="stat-grid">
+                    <div class="stat-card">
+                        <span class="stat-card__value<?= $totalEggs > 999 ? ' stat-card__value--small' : '' ?>" id="stat-total">&#x1F414; <?= $chickenCount['active'] ?></span>
+                        <span class="stat-card__label">Slepic</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-card__value<?= $totalEggs > 999 ? ' stat-card__value--small' : '' ?>" id="stat-total">&#x1F95A; <?= number_format($totalEggs, 0, ',', ' ') ?></span>
+                        <span class="stat-card__label">Vajec celkem</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-card__value<?= $totalEggs > 999 ? ' stat-card__value--small' : '' ?>" id="stat-total" id="stat-avg">&#x1F423; <?= number_format($dailyAvg, 1, ',', ' ') ?></span>
+                        <span class="stat-card__label">Průměr / den</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Kurník -->
             <div class="card">
                 <div class="card__header card__header--brown">&#x1F3E0; Kurník</div>
@@ -202,25 +221,6 @@ $isLoggedIn = \App\Core\Auth::check();
                 </div>
             </div>
 
-            <!-- Statistiky -->
-            <div class="card">
-                <div class="card__header card__header--green">&#x1F522; Statistika</div>
-                <div class="stat-grid">
-                    <div class="stat-card">
-                        <span class="stat-card__value<?= $totalEggs > 999 ? ' stat-card__value--small' : '' ?>" id="stat-total">&#x1F414; <?= $chickenCount['active'] ?></span>
-                        <span class="stat-card__label">Slepic</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-card__value<?= $totalEggs > 999 ? ' stat-card__value--small' : '' ?>" id="stat-total">&#x1F95A; <?= number_format($totalEggs, 0, ',', ' ') ?></span>
-                        <span class="stat-card__label">Vajec celkem</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-card__value<?= $totalEggs > 999 ? ' stat-card__value--small' : '' ?>" id="stat-total" id="stat-avg">&#x1F423; <?= number_format($dailyAvg, 1, ',', ' ') ?></span>
-                        <span class="stat-card__label">Prům. vajec/den</span>
-                    </div>
-                </div>
-            </div>
-
             <!-- Podestýlka -->
             <?php
             function dnyTextHome(int $n): string {
@@ -242,7 +242,7 @@ $isLoggedIn = \App\Core\Auth::check();
             ?>
             <div class="card">
                 <div class="card__header card__header--maintenance">
-                    <span>&#x1F9F9; Výměna podestýlky</span>
+                    <span>&#x1F9F9; Podestýlka</span>
                     <?php if ($isLoggedIn): ?>
                     <button type="button" class="btn btn--primary btn--round" onclick="App.maintenance.beddingQuickLog()">Vyměněno</button>
                     <?php endif; ?>
@@ -261,7 +261,7 @@ $isLoggedIn = \App\Core\Auth::check();
 
             <!-- Počasí -->
             <div class="card">
-                <div class="card__header card__header--blue">&#x26C5; Předpověď počasí Doloplazy</div>
+                <div class="card__header card__header--blue">&#x26C5; Počasí</div>
                 <div id="weather-content" class="weather-list">
                     <p class="text-muted">Načítám předpověď...</p>
                 </div>

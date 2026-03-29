@@ -2326,6 +2326,37 @@ a { color: var(--color-primary); }
 }
 
 /* ==========================================
+   SCROLL TO TOP BUTTON
+   ========================================== */
+.scroll-top {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    width: 2.6rem;
+    height: 2.6rem;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s, visibility 0.3s, background 0.2s;
+    z-index: 500;
+}
+
+.scroll-top.is-visible {
+    opacity: 1;
+    visibility: visible;
+}
+
+.scroll-top:hover {
+    background: var(--color-primary-dark);
+}
+
+/* ==========================================
    RESPONSIVE
    ========================================== */
 @media (max-width: 768px) {
@@ -2410,7 +2441,7 @@ a { color: var(--color-primary); }
 
     .site-nav__dropdown-toggle {
         width: 100%;
-        justify-content: flex-start;
+        text-align: left;
     }
 
     .site-nav__dropdown-menu {
@@ -2439,6 +2470,25 @@ a { color: var(--color-primary); }
     .dashboard__main {
         grid-template-columns: 1fr;
     }
+
+    .dashboard__left,
+    .dashboard__right {
+        display: contents;
+    }
+
+    /* Mobilní pořadí karet */
+    .dashboard__left > .card:nth-child(1) { order: 1; }   /* Zápis vajec */
+    .dashboard__left > .card:nth-child(2) { order: 3; }   /* Snůška */
+    .dashboard__left > .card:nth-child(3) { order: 6; }   /* Teplota */
+    .dashboard__left > .card:nth-child(4) { order: 8; }   /* Poznámky */
+
+    .dashboard__right > .card:nth-child(1) { order: 2; }  /* Statistika */
+    .dashboard__right > .card:nth-child(2) { order: 4; }  /* Kurník */
+    .dashboard__right > .card:nth-child(3) { order: 5; }  /* Výběh */
+    .dashboard__right > .card:nth-child(4) { order: 9; }  /* Podestýlka */
+    .dashboard__right > .card:nth-child(5) { order: 7; }  /* Počasí */
+    .dashboard__right > .card:nth-child(6) { order: 10; } /* Vtip */
+    .dashboard__right > .card:nth-child(7) { order: 11; } /* Fotky */
 
     .charts-row {
         grid-template-columns: 1fr;

@@ -82,6 +82,45 @@ class PhotoController extends Controller
         $this->json(['success' => true]);
     }
 
+    public function regenerateThumbs(): void
+    {
+        Auth::requireAuthApi();
+
+        $uploadDir = __DIR__ . '/../../../public/uploads/';
+        $thumbDir = $uploadDir . 'thumbs/';
+
+        if (!is_dir($thumbDir)) {
+            mkdir($thumbDir, 0755, true);
+        }
+
+        $files = array_merge(
+            glob($uploadDir . '*.jpg'),
+            glob($uploadDir . '*.jpeg'),
+            glob($uploadDir . '*.png'),
+            glob($uploadDir . '*.webp')
+        );
+
+        $success = 0;
+        $failed = 0;
+        $errors = [];
+
+        foreach ($files as $source) {
+            $filename = basename($source);
+            $ext = strtolower(pathinfo($source, PATHINFO_EXTENSION));
+            if ($ext === 'jpeg') $ext = 'jpg';
+
+            $this->createThumbnail($source, $thumbDir . $filename, $ext);
+            $success++;
+        }
+
+        $this->json([
+            'success' => true,
+            'regenerated' => $success,
+            'failed' => $failed,
+            'total' => count($files),
+        ]);
+    }
+
     private function createThumbnail(string $source, string $dest, string $ext): void
     {
         $image = match ($ext) {
@@ -93,11 +132,28 @@ class PhotoController extends Controller
 
         if (!$image) return;
 
+        // Fix orientation based on EXIF data (mainly for JPEG from mobile phones)
+        if ($ext === 'jpg' && function_exists('exif_read_data')) {
+            $exif = @exif_read_data($source);
+            if ($exif && !empty($exif['Orientation'])) {
+                $image = match ((int) $exif['Orientation']) {
+                    3 => imagerotate($image, 180, 0),
+                    6 => imagerotate($image, -90, 0),
+                    8 => imagerotate($image, 90, 0),
+                    default => $image,
+                };
+            }
+        }
+
         $origW = imagesx($image);
         $origH = imagesy($image);
 
         if ($origW <= self::THUMB_MAX_WIDTH) {
-            copy($source, $dest);
+            match ($ext) {
+                'jpg' => imagejpeg($image, $dest, 85),
+                'png' => imagepng($image, $dest),
+                'webp' => imagewebp($image, $dest, 85),
+            };
             imagedestroy($image);
             return;
         }

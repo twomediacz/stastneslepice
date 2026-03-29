@@ -38,7 +38,7 @@ class HomeController
             : null;
 
         View::render('home', [
-            'title' => 'Chov slepic – ' . ($settings['locale_name'] ?? 'Doloplazy'),
+            'title' => 'Chov slepic – Doloplazy – Nástěnka',
             'settings' => $settings,
             'todayEggs' => $todayEggs,
             'recentEggs' => $recentEggs,

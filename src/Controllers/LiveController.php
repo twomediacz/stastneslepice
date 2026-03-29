@@ -32,7 +32,7 @@ class LiveController
         }
 
         View::render('live', [
-            'title' => 'Živě – Kurník',
+            'title' => 'Chov slepic – Doloplazy – Kamery',
             'settings' => $settings,
             'streams' => $streams,
         ]);

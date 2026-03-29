@@ -23,7 +23,7 @@ class FeedingController
         $dailyAvg = FeedingRecord::getDailyAverage(30);
 
         View::render('feeding', [
-            'title' => 'Krmení',
+            'title' => 'Chov slepic – Doloplazy – Krmení',
             'feedTypes' => $feedTypes,
             'recentRecords' => $recentRecords,
             'purchases' => $purchases,

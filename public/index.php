@@ -70,6 +70,7 @@ $router->post('/api/notes/delete', [NoteController::class, 'destroy']);
 $router->get('/api/photos', [PhotoController::class, 'index']);
 $router->post('/api/photos', [PhotoController::class, 'store']);
 $router->post('/api/photos/delete', [PhotoController::class, 'destroy']);
+$router->post('/api/photos/regenerate-thumbs', [PhotoController::class, 'regenerateThumbs']);
 
 // API – nastavení
 $router->get('/api/settings', [SettingController::class, 'index']);
