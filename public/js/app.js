@@ -1966,6 +1966,25 @@ const App = {
     // --- Správa uživatelů ---
     users: {
         init() {
+            const streamsForm = document.getElementById('streams-form');
+            if (streamsForm) {
+                streamsForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const inputs = streamsForm.querySelectorAll('input[name]');
+                    for (const input of inputs) {
+                        const result = await App.api.post('/api/settings', {
+                            setting_key: input.name,
+                            setting_value: input.value
+                        });
+                        if (!result || result.error) {
+                            alert(result?.error || 'Chyba při ukládání.');
+                            return;
+                        }
+                    }
+                    alert('Adresy streamů byly uloženy.');
+                });
+            }
+
             const form = document.getElementById('user-form');
             if (!form) return;
 

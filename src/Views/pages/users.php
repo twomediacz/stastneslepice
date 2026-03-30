@@ -6,6 +6,27 @@ $currentUserId = \App\Core\Auth::user()['id'] ?? 0;
 <section class="maintenance">
     <div class="maintenance__grid">
         <div class="card">
+            <div class="card__header card__header--blue">
+                <span>&#x1F4F9; Kamery – YouTube streamy</span>
+            </div>
+            <div class="card__inner">
+                <form id="streams-form" class="streams-form">
+                    <div class="streams-form__field">
+                        <label for="stream-url-1">Kurník – YouTube URL</label>
+                        <input type="url" id="stream-url-1" name="youtube_livestream_url" placeholder="https://www.youtube.com/watch?v=..." value="<?= htmlspecialchars($settings['youtube_livestream_url'] ?? '') ?>">
+                    </div>
+                    <div class="streams-form__field">
+                        <label for="stream-url-2">Výběh – YouTube URL</label>
+                        <input type="url" id="stream-url-2" name="youtube_livestream_url_2" placeholder="https://www.youtube.com/watch?v=..." value="<?= htmlspecialchars($settings['youtube_livestream_url_2'] ?? '') ?>">
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
             <div class="card__header card__header--brown">
                 <span>&#x1F465; Správa uživatelů</span>
                 <button type="button" class="btn btn--primary btn--round" onclick="App.users.toggleForm()">Přidat uživatele</button>

@@ -46,7 +46,7 @@ $router->get('/udrzba', [MaintenancePageController::class, 'index']);
 $router->get('/krmeni', [FeedingPageController::class, 'index']);
 $router->get('/finance', [FinancePageController::class, 'index']);
 $router->get('/zive', [LiveController::class, 'index']);
-$router->get('/uzivatele', [UsersController::class, 'index']);
+$router->get('/nastaveni', [UsersController::class, 'index']);
 $router->get('/almanach', [AlmanachController::class, 'index']);
 $router->get('/almanach/pokrocily', [AlmanachController::class, 'pokrocily']);
 

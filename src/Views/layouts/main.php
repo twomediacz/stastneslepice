@@ -63,7 +63,7 @@
     <footer class="site-footer">
         <p>Two Media, s.r.o. &copy; <?= date('Y') ?>
         <?php if (\App\Core\Auth::check()): ?>
-            | <a href="/uzivatele">Uživatelé</a>
+            | <a href="/nastaveni">Nastavení</a>
             | <a href="/logout">Odhlásit se</a>
         <?php else: ?>
             | <a href="/login">Přihlášení</a>

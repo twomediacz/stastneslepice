@@ -43,7 +43,7 @@
                                     <th>Datum</th>
                                     <th>Krmivo</th>
                                     <th>kg</th>
-                                    <th>Cena</th>
+                                    <th class="td--money">Cena</th>
                                     <th>Poznámka</th>
                                     <th></th>
                                 </tr>
@@ -58,7 +58,7 @@
                                     <td><?= date('d.m.Y', strtotime($row['record_date'])) ?></td>
                                     <td><?= htmlspecialchars($row['feed_type_name']) ?></td>
                                     <td><?= number_format((float)$row['amount_kg'], 2, ',', ' ') ?></td>
-                                    <td><?= number_format((float)$row['amount_kg'] * (float)$row['price_per_kg'], 0, ',', ' ') ?> Kč</td>
+                                    <td class="td--money"><?= number_format((float)$row['amount_kg'] * (float)$row['price_per_kg'], 0, ',', ' ') ?> Kč</td>
                                     <td><?= htmlspecialchars($row['note'] ?? '') ?></td>
                                     <td class="maintenance-actions">
                                         <button class="btn-icon" onclick="App.feeding.editRecord(this.closest('tr'))" title="Upravit">&#x270E;</button>
@@ -108,7 +108,7 @@
                             <thead>
                                 <tr>
                                     <th>Název</th>
-                                    <th>Kč/kg</th>
+                                    <th class="td--money">Kč/kg</th>
                                     <th>Chutnost</th>
                                     <th>Poznámka</th>
                                     <th></th>
@@ -124,7 +124,7 @@
                                     data-active="<?= $ft['is_active'] ?>"
                                     class="<?= !$ft['is_active'] ? 'row--inactive' : '' ?>">
                                     <td><?= htmlspecialchars($ft['name']) ?><?= !$ft['is_active'] ? ' <small>(neaktivní)</small>' : '' ?></td>
-                                    <td><?= number_format((float)$ft['price_per_kg'], 2, ',', ' ') ?></td>
+                                    <td class="td--money"><?= number_format((float)$ft['price_per_kg'], 2, ',', ' ') ?></td>
                                     <td class="palatability-stars"><?php
                                         $p = (int)($ft['palatability'] ?? 0);
                                         if ($p > 0) {
@@ -187,8 +187,8 @@
                                     <th>Datum</th>
                                     <th>Krmivo</th>
                                     <th>kg</th>
-                                    <th>Cena</th>
-                                    <th>Kč/kg</th>
+                                    <th class="td--money">Cena</th>
+                                    <th class="td--money">Kč/kg</th>
                                     <th>Poznámka</th>
                                     <th></th>
                                 </tr>
@@ -204,8 +204,8 @@
                                     <td><?= date('d.m.Y', strtotime($row['purchased_at'])) ?></td>
                                     <td><?= htmlspecialchars($row['feed_type_name']) ?></td>
                                     <td><?= number_format((float)$row['quantity_kg'], 1, ',', ' ') ?></td>
-                                    <td><?= number_format((float)$row['total_price'], 0, ',', ' ') ?> Kč</td>
-                                    <td><?= $row['quantity_kg'] > 0 ? number_format((float)$row['total_price'] / (float)$row['quantity_kg'], 1, ',', ' ') : '–' ?></td>
+                                    <td class="td--money"><?= number_format((float)$row['total_price'], 0, ',', ' ') ?> Kč</td>
+                                    <td class="td--money"><?= $row['quantity_kg'] > 0 ? number_format((float)$row['total_price'] / (float)$row['quantity_kg'], 1, ',', ' ') : '–' ?></td>
                                     <td><?= htmlspecialchars($row['note'] ?? '') ?></td>
                                     <td class="maintenance-actions">
                                         <button class="btn-icon btn-icon--danger" onclick="App.feeding.removePurchase(<?= $row['id'] ?>)" title="Smazat">&times;</button>

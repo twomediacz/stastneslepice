@@ -40,7 +40,7 @@
                                 <tr>
                                     <th>Datum</th>
                                     <th>Kategorie</th>
-                                    <th>Částka</th>
+                                    <th class="td--money">Částka</th>
                                     <th>Poznámka</th>
                                     <th></th>
                                 </tr>
@@ -54,7 +54,7 @@
                                     data-note="<?= htmlspecialchars($row['note'] ?? '') ?>">
                                     <td><?= date('d.m.Y', strtotime($row['expense_date'])) ?></td>
                                     <td><?= \App\Models\Expense::categoryLabel($row['category']) ?></td>
-                                    <td><?= number_format((float)$row['amount'], 0, ',', ' ') ?> Kč</td>
+                                    <td class="td--money"><?= number_format((float)$row['amount'], 0, ',', ' ') ?> Kč</td>
                                     <td><?= htmlspecialchars($row['note'] ?? '') ?></td>
                                     <td class="maintenance-actions">
                                         <button class="btn-icon" onclick="App.finance.editExpense(this.closest('tr'))" title="Upravit">&#x270E;</button>
@@ -104,7 +104,7 @@
                                     <th>Datum</th>
                                     <th>Typ</th>
                                     <th>ks</th>
-                                    <th>Cena</th>
+                                    <th class="td--money">Cena</th>
                                     <th>Příjemce</th>
                                     <th>Poznámka</th>
                                     <th></th>
@@ -122,7 +122,7 @@
                                     <td><?= date('d.m.Y', strtotime($row['transaction_date'])) ?></td>
                                     <td><span class="badge badge--<?= $row['type'] ?>"><?= \App\Models\EggTransaction::typeLabel($row['type']) ?></span></td>
                                     <td><?= $row['quantity'] ?></td>
-                                    <td><?= $row['type'] === 'sale' ? number_format((float)$row['price_total'], 0, ',', ' ') . ' Kč' : '–' ?></td>
+                                    <td class="td--money"><?= $row['type'] === 'sale' ? number_format((float)$row['price_total'], 0, ',', ' ') . ' Kč' : '–' ?></td>
                                     <td><?= htmlspecialchars($row['recipient'] ?? '') ?></td>
                                     <td><?= htmlspecialchars($row['note'] ?? '') ?></td>
                                     <td class="maintenance-actions">
