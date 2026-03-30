@@ -64,7 +64,7 @@ $isLoggedIn = \App\Core\Auth::check();
                     </div>
                     <div class="form-group form-group--full">
                         <label for="ch-note">Poznámka</label>
-                        <input type="text" id="ch-note" name="note">
+                        <textarea id="ch-note" name="note" rows="1" class="egg-form__note"></textarea>
                     </div>
                 </div>
                 <div class="chicken-form__actions">

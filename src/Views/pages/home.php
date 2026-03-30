@@ -55,7 +55,7 @@ $isLoggedIn = \App\Core\Auth::check();
                         <form id="egg-form" class="egg-form">
                             <input type="text" id="egg-date" name="date" value="<?= date('Y-m-d') ?>" class="egg-form__date" readonly>
                             <input type="number" name="egg_count" placeholder="Počet" min="0" required class="egg-form__count">
-                            <input type="text" name="note" placeholder="Poznámka" class="egg-form__note">
+                            <textarea name="note" placeholder="Poznámka" class="egg-form__note" rows="1"></textarea>
                             <div class="form-buttons">
                                 <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
                                 <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.eggs.toggleForm(false)">Zrušit</button>
@@ -127,7 +127,7 @@ $isLoggedIn = \App\Core\Auth::check();
             <!-- Poznámky -->
             <div class="card">
                 <div class="card__header card__header--note">
-                    <span>&#x1F4DD; Poznámky</span>
+                    <span>&#x1F4DD; Deník chovatele</span>
                     <?php if ($isLoggedIn): ?>
                     <button type="button" class="btn btn--primary btn--round" onclick="App.notes.toggleForm()">Přidat</button>
                     <?php endif; ?>
@@ -138,7 +138,7 @@ $isLoggedIn = \App\Core\Auth::check();
                         <form id="note-form" class="egg-form">
                             <input type="hidden" name="id" value="">
                             <input type="text" id="note-date" name="note_date" placeholder="Datum" required class="egg-form__date" readonly>
-                            <input type="text" name="content" placeholder="Poznámka" required class="egg-form__note">
+                            <textarea name="content" placeholder="Poznámka" required class="egg-form__note" rows="1"></textarea>
                             <div class="form-buttons">
                                 <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
                                 <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.notes.hideForm()">Zrušit</button>
@@ -283,7 +283,7 @@ $isLoggedIn = \App\Core\Auth::check();
                     <div id="joke-form-wrap" class="egg-form-wrap" style="display:none">
                         <form id="joke-form" class="egg-form">
                             <input type="hidden" name="id" value="">
-                            <textarea name="content" placeholder="Text vtipu..." required class="egg-form__note" rows="2"></textarea>
+                            <textarea name="content" placeholder="Text vtipu..." required class="egg-form__note" rows="1"></textarea>
                             <div class="form-buttons">
                                 <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
                                 <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.jokes.hideForm()">Zrušit</button>

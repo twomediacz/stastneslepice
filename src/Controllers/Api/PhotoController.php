@@ -8,7 +8,7 @@ use App\Models\Photo;
 
 class PhotoController extends Controller
 {
-    private const MAX_SIZE = 5 * 1024 * 1024; // 5 MB
+    private const MAX_SIZE = 10 * 1024 * 1024; // 10 MB
     private const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
     private const THUMB_MAX_WIDTH = 300;
 
@@ -33,7 +33,7 @@ class PhotoController extends Controller
         }
 
         if ($file['size'] > self::MAX_SIZE) {
-            $this->jsonError('Maximální velikost souboru je 5 MB.');
+            $this->jsonError('Maximální velikost souboru je 10 MB.');
         }
 
         $ext = match ($file['type']) {

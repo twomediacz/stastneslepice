@@ -26,7 +26,7 @@
                                 <input type="number" name="amount" step="0.01" min="0.01" placeholder="Kč" required class="egg-form__count">
                             </div>
                             <div class="feeding-form__row">
-                                <input type="text" name="note" placeholder="Poznámka" class="egg-form__note feeding-form__note">
+                                <textarea name="note" placeholder="Poznámka" class="egg-form__note feeding-form__note" rows="1"></textarea>
                                 <div class="form-buttons">
                                     <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
                                     <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.finance.hideForm('expense')">Zrušit</button>
@@ -89,7 +89,7 @@
                             </div>
                             <div class="feeding-form__row">
                                 <input type="text" name="recipient" placeholder="Příjemce" class="egg-form__note" style="flex:0.5; min-width:80px;">
-                                <input type="text" name="note" placeholder="Poznámka" class="egg-form__note feeding-form__note">
+                                <textarea name="note" placeholder="Poznámka" class="egg-form__note feeding-form__note" rows="1"></textarea>
                                 <div class="form-buttons">
                                     <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
                                     <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.finance.hideForm('egg-tx')">Zrušit</button>

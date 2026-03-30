@@ -66,7 +66,7 @@ if ($nextBeddingDate) {
                     <form id="bedding-form" class="egg-form">
                         <input type="hidden" name="id" value="">
                         <input type="text" id="bedding-date" name="changed_at" placeholder="Datum" required class="egg-form__date">
-                        <input type="text" name="note" placeholder="Poznámka" class="egg-form__note">
+                        <textarea name="note" placeholder="Poznámka" class="egg-form__note" rows="1"></textarea>
                         <div class="form-buttons">
                             <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
                             <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.maintenance.hideForm('bedding')">Zrušit</button>
@@ -111,7 +111,7 @@ if ($nextBeddingDate) {
                     <form id="repair-form" class="egg-form">
                         <input type="hidden" name="id" value="">
                         <input type="text" id="repair-date" name="repaired_at" placeholder="Datum" required class="egg-form__date">
-                        <input type="text" name="note" placeholder="Poznámka" class="egg-form__note">
+                        <textarea name="note" placeholder="Poznámka" class="egg-form__note" rows="1"></textarea>
                         <div class="form-buttons">
                             <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
                             <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.maintenance.hideForm('repair')">Zrušit</button>

@@ -87,6 +87,7 @@ const App = {
             if (dateInput._flatpickr) dateInput._flatpickr.setDate(tr.dataset.date);
             form.egg_count.value = tr.dataset.count;
             form.note.value = tr.dataset.note;
+            App.autoResize.resize(form.note);
 
             App.eggs.toggleForm(true);
         },
@@ -547,6 +548,7 @@ const App = {
                 if (dateInput._flatpickr) dateInput._flatpickr.setDate(tr.dataset.date);
             }
             form.content.value = tr.dataset.content;
+            App.autoResize.resize(form.content);
             wrap.style.display = '';
             form.content.focus();
         },
@@ -788,6 +790,7 @@ const App = {
                 form.acquired_date.value = data.acquired_date || '';
                 form.end_date.value = data.end_date || '';
                 form.note.value = data.note || '';
+                App.autoResize.resize(form.note);
                 form.querySelector('input[name="id"]').value = data.id;
             } else {
                 title.textContent = 'Přidat slepici';
@@ -1067,7 +1070,9 @@ const App = {
             form.querySelector('input[name="id"]').value = tr.dataset.id;
             dateInput.value = tr.dataset.datetime;
             if (dateInput._flatpickr) dateInput._flatpickr.setDate(tr.dataset.datetime);
-            form.querySelector('input[name="note"]').value = tr.dataset.note;
+            const noteTa = form.querySelector('[name="note"]');
+            noteTa.value = tr.dataset.note;
+            App.autoResize.resize(noteTa);
             form.querySelector('button[type="submit"]').textContent = 'Uložit';
             wrap.style.display = '';
         },
@@ -1308,7 +1313,7 @@ const App = {
             else dateInput.value = tr.dataset.date;
             form.querySelector('select[name="feed_type_id"]').value = tr.dataset.feedTypeId;
             form.querySelector('input[name="amount_kg"]').value = tr.dataset.amount;
-            form.querySelector('input[name="note"]').value = tr.dataset.note;
+            { const ta = form.querySelector('[name="note"]'); ta.value = tr.dataset.note; App.autoResize.resize(ta); }
             wrap.style.display = '';
         },
 
@@ -1322,7 +1327,7 @@ const App = {
             form.querySelector('input[name="name"]').value = tr.dataset.name;
             form.querySelector('input[name="price_per_kg"]').value = tr.dataset.price;
             form.querySelector('select[name="palatability"]').value = tr.dataset.palatability;
-            form.querySelector('input[name="note"]').value = tr.dataset.note;
+            { const ta = form.querySelector('[name="note"]'); ta.value = tr.dataset.note; App.autoResize.resize(ta); }
             wrap.style.display = '';
         },
 
@@ -1676,7 +1681,7 @@ const App = {
             else dateInput.value = tr.dataset.date;
             form.querySelector('select[name="category"]').value = tr.dataset.category;
             form.querySelector('input[name="amount"]').value = tr.dataset.amount;
-            form.querySelector('input[name="note"]').value = tr.dataset.note;
+            { const ta = form.querySelector('[name="note"]'); ta.value = tr.dataset.note; App.autoResize.resize(ta); }
             wrap.style.display = '';
         },
 
@@ -1694,7 +1699,7 @@ const App = {
             form.querySelector('input[name="quantity"]').value = tr.dataset.quantity;
             form.querySelector('input[name="price_total"]').value = tr.dataset.price;
             form.querySelector('input[name="recipient"]').value = tr.dataset.recipient;
-            form.querySelector('input[name="note"]').value = tr.dataset.note;
+            { const ta = form.querySelector('[name="note"]'); ta.value = tr.dataset.note; App.autoResize.resize(ta); }
 
             // Show/hide price field based on type
             const priceInput = document.getElementById('finance-egg-tx-price');
@@ -2132,8 +2137,28 @@ const App = {
         }
     },
 
+    // --- Auto-resize textareas ---
+    autoResize: {
+        init() {
+            document.querySelectorAll('textarea.egg-form__note').forEach(ta => {
+                ta.style.overflow = 'hidden';
+                ta.addEventListener('input', () => App.autoResize.resize(ta));
+                App.autoResize.resize(ta);
+            });
+        },
+        resize(ta) {
+            if (!ta.offsetHeight) {
+                requestAnimationFrame(() => App.autoResize.resize(ta));
+                return;
+            }
+            ta.style.height = 'auto';
+            ta.style.height = ta.scrollHeight + 'px';
+        }
+    },
+
     // --- Init ---
     init() {
+        App.autoResize.init();
         App.hamburger.init();
         App.scrollTop.init();
         App.eggs.init();

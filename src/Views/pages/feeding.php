@@ -28,7 +28,7 @@
                                 <input type="number" name="amount_kg" step="0.01" min="0.01" placeholder="kg" required class="egg-form__count">
                             </div>
                             <div class="feeding-form__row">
-                                <input type="text" name="note" placeholder="Poznámka" class="egg-form__note feeding-form__note">
+                                <textarea name="note" placeholder="Poznámka" class="egg-form__note feeding-form__note" rows="1"></textarea>
                                 <div class="form-buttons">
                                     <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
                                     <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.feeding.hideForm('record')">Zrušit</button>
@@ -95,7 +95,7 @@
                                 </select>
                             </div>
                             <div class="feeding-form__row">
-                                <input type="text" name="note" placeholder="Poznámka" class="egg-form__note feeding-form__note">
+                                <textarea name="note" placeholder="Poznámka" class="egg-form__note feeding-form__note" rows="1"></textarea>
                                 <div class="form-buttons">
                                     <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
                                     <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.feeding.hideForm('type')">Zrušit</button>
@@ -172,7 +172,7 @@
                                 <input type="number" name="total_price" step="0.01" min="0" placeholder="Celková cena (Kč)" required class="egg-form__count">
                             </div>
                             <div class="feeding-form__row">
-                                <input type="text" name="note" placeholder="Poznámka" class="egg-form__note feeding-form__note">
+                                <textarea name="note" placeholder="Poznámka" class="egg-form__note feeding-form__note" rows="1"></textarea>
                                 <div class="form-buttons">
                                     <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
                                     <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.feeding.hideForm('purchase')">Zrušit</button>

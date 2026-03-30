@@ -707,7 +707,6 @@ a { color: var(--color-primary); }
 .egg-table-wrap {
     max-height: 190px;
     overflow-y: auto;
-    scrollbar-gutter: stable;
     margin-top: 1rem;
 }
 
@@ -718,13 +717,13 @@ a { color: var(--color-primary); }
 }
 
 .egg-table th:nth-child(1),
-.egg-table td:nth-child(1) { width: 20%; }
+.egg-table td:nth-child(1) { width: 5.5rem; }
 .egg-table th:nth-child(2),
-.egg-table td:nth-child(2) { width: 10%; text-align: center; }
+.egg-table td:nth-child(2) { width: 3.5rem; text-align: center; }
 .egg-table th:nth-child(3),
 .egg-table td:nth-child(3) { width: auto; }
 .egg-table th:nth-child(4),
-.egg-table td:nth-child(4) { width: 4.5rem; text-align: center; }
+.egg-table td:nth-child(4) { width: 3.5rem; text-align: center; }
 
 .egg-table th,
 .egg-table td {
@@ -789,15 +788,21 @@ a { color: var(--color-primary); }
 .egg-form {
     display: flex;
     gap: 0.5rem;
-    align-items: center;
+    align-items: flex-start;
 }
 
-.egg-form input {
+.egg-form input,
+.egg-form textarea {
     padding: 0.4rem 0.6rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
     font-size: 0.9rem;
     font-family: var(--font);
+}
+
+.egg-form textarea {
+    resize: vertical;
+    min-height: 2.4em;
 }
 
 .egg-form__date { width: 100px; text-align: left; cursor: pointer; }
@@ -1160,7 +1165,8 @@ a { color: var(--color-primary); }
     color: var(--color-text-muted);
 }
 
-.form-group input {
+.form-group input,
+.form-group textarea {
     width: 100%;
     padding: 0.6rem 0.8rem;
     border: 1px solid var(--color-border);
@@ -1170,7 +1176,8 @@ a { color: var(--color-primary); }
     transition: border-color 0.2s;
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(90, 143, 60, 0.15);
@@ -1409,7 +1416,8 @@ a { color: var(--color-primary); }
 }
 
 .chicken-form__grid .form-group input,
-.chicken-form__grid .form-group select {
+.chicken-form__grid .form-group select,
+.chicken-form__grid .form-group textarea {
     width: 100%;
     padding: 0.4rem 0.6rem;
     border: 1px solid var(--color-border);
@@ -1498,11 +1506,11 @@ a { color: var(--color-primary); }
 }
 
 .maintenance-table th:nth-child(1),
-.maintenance-table td:nth-child(1) { width: 20%; }
+.maintenance-table td:nth-child(1) { width: 5.5rem; }
 .maintenance-table th:nth-child(2),
 .maintenance-table td:nth-child(2) { width: auto; }
 .maintenance-table th:nth-child(3),
-.maintenance-table td:nth-child(3) { width: 4.5rem; text-align: center; }
+.maintenance-table td:nth-child(3) { width: 3.5rem; text-align: center; }
 
 .maintenance-table th,
 .maintenance-table td {
@@ -1728,7 +1736,8 @@ a { color: var(--color-primary); }
 }
 
 .feeding-form input,
-.feeding-form select {
+.feeding-form select,
+.feeding-form textarea {
     padding: 0.4rem 0.6rem;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
@@ -1740,12 +1749,13 @@ a { color: var(--color-primary); }
 .feeding-form__row {
     display: flex;
     gap: 0.4rem;
-    align-items: center;
+    align-items: flex-start;
     flex-wrap: wrap;
 }
 
 .feeding-form__row input:not([type="hidden"]),
-.feeding-form__row select {
+.feeding-form__row select,
+.feeding-form__row textarea {
     flex: 1;
     min-width: 80px;
 }
@@ -1763,6 +1773,17 @@ a { color: var(--color-primary); }
 .feeding-table th,
 .feeding-table td {
     width: auto;
+}
+
+.feeding-table th:nth-child(1),
+.feeding-table td:nth-child(1) {
+    width: 5.5rem;
+}
+
+.feeding-table th:last-child,
+.feeding-table td:last-child {
+    width: 3.5rem;
+    text-align: center;
 }
 
 /* Palatability stars */
@@ -2516,7 +2537,8 @@ a { color: var(--color-primary); }
         align-items: stretch;
     }
     .feeding-form__row input:not([type="hidden"]),
-    .feeding-form__row select {
+    .feeding-form__row select,
+    .feeding-form__row textarea {
         width: 100% !important;
         flex: none;
     }
@@ -2571,12 +2593,12 @@ a { color: var(--color-primary); }
     .maintenance-table td:nth-child(1),
     .maintenance-table th:nth-child(1) {
         white-space: nowrap;
-        width: auto;
+        width: 5.5rem;
     }
 
     .egg-table td:nth-child(2),
     .egg-table th:nth-child(2) {
-        width: 18%;
+        width: 15%;
     }
 
     /* Almanach responsive */
