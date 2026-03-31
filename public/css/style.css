@@ -868,6 +868,15 @@ a { color: var(--color-primary); }
     color: #157565;
 }
 
+.stat-card--maintenance {
+    background: linear-gradient(180deg, #f5ecd4 0%, #fbf7eb 100%);
+    border-color: #d4be82;
+}
+
+.stat-card--maintenance .stat-card__value {
+    color: #7a5c10;
+}
+
 .stat-card__value {
     font-weight: 700;
     font-size: 1.3rem;

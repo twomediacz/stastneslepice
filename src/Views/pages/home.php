@@ -248,11 +248,11 @@ $isLoggedIn = \App\Core\Auth::check();
                     <?php endif; ?>
                 </div>
                 <div class="stat-grid2">
-                    <div class="stat-card">
+                    <div class="stat-card stat-card--maintenance">
                         <span class="stat-card__value" id="dashboard-bedding-last"><?= $lastBeddingDate ? date('d.m.Y', strtotime($lastBeddingDate)) : '–' ?></span>
                         <span class="stat-card__label">Poslední výměna</span>
                     </div>
-                    <div class="stat-card">
+                    <div class="stat-card stat-card--maintenance">
                         <span class="stat-card__value bedding-status__value--<?= $dbStatus ?>" id="dashboard-bedding-next"><?php if ($dbDaysLeft !== null): ?><?= $dbDaysLeft < 0 ? dnyTextHome($dbDaysLeft) . ' po termínu' : ($dbDaysLeft === 0 ? 'dnes' : 'za ' . dnyTextHome($dbDaysLeft)) ?><?php else: ?>–<?php endif; ?></span>
                         <span class="stat-card__label">Příští výměna</span>
                     </div>
