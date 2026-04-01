@@ -1,10 +1,19 @@
+# Dependencies and test/runtime artifacts
 /vendor/
+/.phpunit.cache/
+/.phpunit.result.cache
+/coverage/
+/build/
+
+# Local runtime data
+/storage/cache/
 /storage/logs/*.log
+/public/uploads/*
+!/public/uploads/.htaccess
+
+# Local configuration and editor files
 /config/config.local.php
 .env
 .DS_Store
 *.swp
 .vscode/sftp.json
-/storage/cache/
-/public/uploads/*
-!/public/uploads/.htaccess

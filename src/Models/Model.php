@@ -75,4 +75,45 @@ abstract class Model
         $stmt->execute($params);
         return $stmt->fetchColumn();
     }
+
+    protected static function isSqlite(): bool
+    {
+        return static::db()->getAttribute(PDO::ATTR_DRIVER_NAME) === 'sqlite';
+    }
+
+    protected static function dateRangeCondition(string $column, int $amount, string $unit): array
+    {
+        if (!static::isSqlite()) {
+            return [
+                sprintf('%s >= DATE_SUB(CURDATE(), INTERVAL ? %s)', $column, strtoupper($unit)),
+                [$amount],
+            ];
+        }
+
+        $modifier = match (strtolower($unit)) {
+            'day' => sprintf('-%d day', $amount),
+            'week' => sprintf('-%d day', $amount * 7),
+            'month' => sprintf('-%d month', $amount),
+            default => throw new \InvalidArgumentException("Unsupported unit: {$unit}"),
+        };
+
+        return [
+            sprintf("date(%s) >= date('now', ?)", $column),
+            [$modifier],
+        ];
+    }
+
+    protected static function monthBucket(string $column): string
+    {
+        return static::isSqlite()
+            ? sprintf("strftime('%%Y-%%m', %s)", $column)
+            : sprintf("DATE_FORMAT(%s, '%%Y-%%m')", $column);
+    }
+
+    protected static function weekBucket(string $column): string
+    {
+        return static::isSqlite()
+            ? sprintf("strftime('%%Y-%%W', %s)", $column)
+            : sprintf("YEARWEEK(%s, 1)", $column);
+    }
 }

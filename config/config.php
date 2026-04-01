@@ -16,14 +16,27 @@ $config = [
         'climate_key' => '', // Nastavte v config.local.php
     ],
     'db' => [
+        'driver' => getenv('DB_DRIVER') ?: 'mysql',
         'host' => '127.0.0.1',
         'port' => 3306,
-        'database' => 'stastneslepice',
-        'username' => 'root',
-        'password' => '',
+        'database' => getenv('DB_DATABASE') ?: 'stastneslepice',
+        'username' => getenv('DB_USERNAME') ?: 'root',
+        'password' => getenv('DB_PASSWORD') ?: '',
         'charset' => 'utf8mb4',
     ],
 ];
+
+if (($dbHost = getenv('DB_HOST')) !== false && $dbHost !== '') {
+    $config['db']['host'] = $dbHost;
+}
+
+if (($dbPort = getenv('DB_PORT')) !== false && $dbPort !== '') {
+    $config['db']['port'] = (int) $dbPort;
+}
+
+if (($dbCharset = getenv('DB_CHARSET')) !== false && $dbCharset !== '') {
+    $config['db']['charset'] = $dbCharset;
+}
 
 // Lokální přepisy (mimo git)
 $localConfig = __DIR__ . '/config.local.php';

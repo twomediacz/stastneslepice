@@ -17,10 +17,12 @@ class Setting extends Model
 
     public static function set(string $key, string $value): void
     {
-        $stmt = static::db()->prepare(
-            "INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)
-             ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)"
-        );
+        $sql = static::isSqlite()
+            ? "INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)
+               ON CONFLICT(setting_key) DO UPDATE SET setting_value = excluded.setting_value"
+            : "INSERT INTO settings (setting_key, setting_value) VALUES (?, ?)
+               ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value)";
+        $stmt = static::db()->prepare($sql);
         $stmt->execute([$key, $value]);
     }
 

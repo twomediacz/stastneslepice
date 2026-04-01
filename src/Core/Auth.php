@@ -42,7 +42,12 @@ class Auth
     public static function requireAuth(): void
     {
         if (!self::check()) {
-            header('Location: /login');
+            header('Location: /login', true, 302);
+
+            if (defined('APP_TEST_MODE') && APP_TEST_MODE) {
+                throw new TestAbortException('Redirected to login');
+            }
+
             exit;
         }
     }
@@ -52,6 +57,11 @@ class Auth
         if (!self::check()) {
             header('Content-Type: application/json', true, 401);
             echo json_encode(['error' => 'Nepřihlášen']);
+
+            if (defined('APP_TEST_MODE') && APP_TEST_MODE) {
+                throw new TestAbortException('API authentication required');
+            }
+
             exit;
         }
     }

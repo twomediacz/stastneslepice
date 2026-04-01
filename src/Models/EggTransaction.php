@@ -15,59 +15,70 @@ class EggTransaction extends Model
 
     public static function getRecent(int $days = 90): array
     {
+        [$condition, $params] = static::dateRangeCondition('transaction_date', $days, 'day');
+
         return static::query(
             "SELECT * FROM egg_transactions
-             WHERE transaction_date >= DATE_SUB(CURDATE(), INTERVAL ? DAY)
+             WHERE {$condition}
              ORDER BY transaction_date DESC, id DESC",
-            [$days]
+            $params
         );
     }
 
     public static function getTotalRevenue(int $months = 12): float
     {
+        [$condition, $params] = static::dateRangeCondition('transaction_date', $months, 'month');
+
         return (float) static::queryValue(
             "SELECT COALESCE(SUM(price_total), 0)
              FROM egg_transactions
              WHERE type = 'sale'
-               AND transaction_date >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)",
-            [$months]
+               AND {$condition}",
+            $params
         );
     }
 
     public static function getTotalSold(int $months = 12): int
     {
+        [$condition, $params] = static::dateRangeCondition('transaction_date', $months, 'month');
+
         return (int) static::queryValue(
             "SELECT COALESCE(SUM(quantity), 0)
              FROM egg_transactions
              WHERE type = 'sale'
-               AND transaction_date >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)",
-            [$months]
+               AND {$condition}",
+            $params
         );
     }
 
     public static function getTotalGifted(int $months = 12): int
     {
+        [$condition, $params] = static::dateRangeCondition('transaction_date', $months, 'month');
+
         return (int) static::queryValue(
             "SELECT COALESCE(SUM(quantity), 0)
              FROM egg_transactions
              WHERE type = 'gift'
-               AND transaction_date >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)",
-            [$months]
+               AND {$condition}",
+            $params
         );
     }
 
     public static function getMonthlyRevenue(int $months = 12): array
     {
+        [$condition, $params] = static::dateRangeCondition('transaction_date', $months, 'month');
+        $monthBucket = static::monthBucket('transaction_date');
+
         return static::query(
-            "SELECT DATE_FORMAT(transaction_date, '%Y-%m') AS month,
+            "SELECT {$monthBucket} AS month,
                     SUM(CASE WHEN type = 'sale' THEN price_total ELSE 0 END) AS revenue,
                     SUM(CASE WHEN type = 'sale' THEN quantity ELSE 0 END) AS sold,
                     SUM(CASE WHEN type = 'gift' THEN quantity ELSE 0 END) AS gifted
              FROM egg_transactions
-             WHERE transaction_date >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)
-             GROUP BY DATE_FORMAT(transaction_date, '%Y-%m')
+             WHERE {$condition}
+             GROUP BY {$monthBucket}
              ORDER BY month ASC",
-            [$months]
+            $params
         );
     }
 

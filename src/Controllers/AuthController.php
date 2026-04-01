@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Core\Auth;
+use App\Core\TestAbortException;
 use App\Core\View;
 use App\Models\User;
 
@@ -11,8 +12,7 @@ class AuthController
     public function showLogin(): void
     {
         if (Auth::check()) {
-            header('Location: /');
-            exit;
+            $this->redirect('/');
         }
         View::render('login', ['title' => 'Chov slepic – Doloplazy – Přihlášení']);
     }
@@ -42,14 +42,23 @@ class AuthController
         }
 
         Auth::login($user['id'], $user['username'], $user['role']);
-        header('Location: /');
-        exit;
+        $this->redirect('/');
     }
 
     public function logout(): void
     {
         Auth::logout();
-        header('Location: /');
+        $this->redirect('/');
+    }
+
+    private function redirect(string $location): void
+    {
+        header("Location: {$location}", true, 302);
+
+        if (defined('APP_TEST_MODE') && APP_TEST_MODE) {
+            throw new TestAbortException("Redirected to {$location}");
+        }
+
         exit;
     }
 }

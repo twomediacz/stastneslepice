@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Core\TestAbortException;
+
 abstract class Controller
 {
     protected function json(mixed $data, int $status = 200): void
@@ -9,6 +11,11 @@ abstract class Controller
         http_response_code($status);
         header('Content-Type: application/json; charset=utf-8');
         echo json_encode($data, JSON_UNESCAPED_UNICODE);
+
+        if (defined('APP_TEST_MODE') && APP_TEST_MODE) {
+            throw new TestAbortException('JSON response sent');
+        }
+
         exit;
     }
 

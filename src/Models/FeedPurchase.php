@@ -18,25 +18,30 @@ class FeedPurchase extends Model
 
     public static function getTotalSpent(int $months = 12): float
     {
+        [$condition, $params] = static::dateRangeCondition('purchased_at', $months, 'month');
+
         return (float) static::queryValue(
             "SELECT COALESCE(SUM(total_price), 0)
              FROM feed_purchases
-             WHERE purchased_at >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)",
-            [$months]
+             WHERE {$condition}",
+            $params
         );
     }
 
     public static function getMonthlySpending(int $months = 12): array
     {
+        [$condition, $params] = static::dateRangeCondition('purchased_at', $months, 'month');
+        $monthBucket = static::monthBucket('purchased_at');
+
         return static::query(
-            "SELECT DATE_FORMAT(purchased_at, '%Y-%m') AS month,
+            "SELECT {$monthBucket} AS month,
                     SUM(total_price) AS total_spent,
                     SUM(quantity_kg) AS total_kg
              FROM feed_purchases
-             WHERE purchased_at >= DATE_SUB(CURDATE(), INTERVAL ? MONTH)
-             GROUP BY DATE_FORMAT(purchased_at, '%Y-%m')
+             WHERE {$condition}
+             GROUP BY {$monthBucket}
              ORDER BY month ASC",
-            [$months]
+            $params
         );
     }
 }

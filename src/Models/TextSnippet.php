@@ -8,8 +8,10 @@ class TextSnippet extends Model
 
     public static function getRandom(string $type): ?array
     {
+        $orderBy = static::isSqlite() ? 'RANDOM()' : 'RAND()';
+
         return static::queryOne(
-            "SELECT * FROM text_snippets WHERE type = ? ORDER BY RAND() LIMIT 1",
+            "SELECT * FROM text_snippets WHERE type = ? ORDER BY {$orderBy} LIMIT 1",
             [$type]
         );
     }
