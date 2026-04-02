@@ -191,6 +191,22 @@ $isLoggedIn = \App\Core\Auth::check();
                 </div>
             </div>
 
+            <!-- Pohádka o slepicích -->
+            <div class="card">
+                <div class="card__header card__header--video">&#x1F3AC; Pohádka o slepicích</div>
+                <div class="card__inner">
+                    <div class="live-video">
+                        <iframe
+                            src="https://www.youtube.com/embed/rVH1nboY_Cs"
+                            title="Pohádka o slepicích"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>
+
             <!-- Kurník -->
             <div class="card">
                 <div class="card__header card__header--brown">&#x1F3E0; Kurník</div>

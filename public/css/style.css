@@ -313,6 +313,10 @@ a { color: var(--color-primary); }
     background: linear-gradient(135deg, #e8a838, #f0c060);
 }
 
+.card__header--video {
+    background: linear-gradient(135deg, #c85f8f, #e48fb4);
+}
+
 .joke-header-btns {
     display: flex;
     gap: .4rem;
@@ -729,6 +733,7 @@ a { color: var(--color-primary); }
 .egg-table td {
     padding: 0.25rem 0.5rem;
     text-align: left;
+    vertical-align: top;
     border: 1px solid var(--color-border-light);
     font-size: 0.8rem;
     line-height: 1.3;
@@ -1459,6 +1464,7 @@ a { color: var(--color-primary); }
 .chickens-tbl td {
     padding: 0.35rem 0.6rem;
     text-align: left;
+    vertical-align: top;
     border: 1px solid var(--color-border-light);
     font-size: 0.82rem;
     line-height: 1.3;
@@ -1529,6 +1535,7 @@ a { color: var(--color-primary); }
 .maintenance-table td {
     padding: 0.25rem 0.5rem;
     text-align: left;
+    vertical-align: top;
     border: 1px solid var(--color-border-light);
     font-size: 0.8rem;
     line-height: 1.3;
@@ -2519,12 +2526,13 @@ td.td--money, th.td--money { text-align: right; }
     .dashboard__left > .card:nth-child(4) { order: 8; }   /* Poznámky */
 
     .dashboard__right > .card:nth-child(1) { order: 2; }  /* Statistika */
-    .dashboard__right > .card:nth-child(2) { order: 4; }  /* Kurník */
-    .dashboard__right > .card:nth-child(3) { order: 5; }  /* Výběh */
-    .dashboard__right > .card:nth-child(4) { order: 9; }  /* Podestýlka */
-    .dashboard__right > .card:nth-child(5) { order: 7; }  /* Počasí */
-    .dashboard__right > .card:nth-child(6) { order: 10; } /* Vtip */
-    .dashboard__right > .card:nth-child(7) { order: 11; } /* Fotky */
+    .dashboard__right > .card:nth-child(2) { order: 4; }  /* Pohádka */
+    .dashboard__right > .card:nth-child(3) { order: 5; }  /* Kurník */
+    .dashboard__right > .card:nth-child(4) { order: 6; }  /* Výběh */
+    .dashboard__right > .card:nth-child(5) { order: 9; }  /* Podestýlka */
+    .dashboard__right > .card:nth-child(6) { order: 7; }  /* Počasí */
+    .dashboard__right > .card:nth-child(7) { order: 10; } /* Vtip */
+    .dashboard__right > .card:nth-child(8) { order: 11; } /* Fotky */
 
     .charts-row {
         grid-template-columns: 1fr;
