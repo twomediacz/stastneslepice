@@ -28,7 +28,7 @@ class HomeController
         $recentNotes = Note::getRecent(10);
         $photos = Photo::getAll(12);
 
-        $randomJoke = TextSnippet::getRandom('joke');
+        $dailyJoke = TextSnippet::getDaily('joke');
 
         $intervalDays = (int) ($settings['bedding_interval_days'] ?? 14);
         $lastBedding = BeddingChange::getLatest();
@@ -51,7 +51,7 @@ class HomeController
             'photos' => $photos,
             'lastBeddingDate' => $lastBeddingDate,
             'nextBeddingDate' => $nextBeddingDate,
-            'randomJoke' => $randomJoke,
+            'dailyJoke' => $dailyJoke,
         ]);
     }
 }

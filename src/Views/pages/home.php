@@ -308,9 +308,9 @@ $isLoggedIn = \App\Core\Auth::check();
                     </div>
                     <?php endif; ?>
                     <div class="joke-display" id="joke-display">
-                        <?php if ($randomJoke): ?>
-                        <p class="joke-text" id="joke-text"><?= htmlspecialchars($randomJoke['content']) ?></p>
-                        <?php else: ?>
+                    <?php if ($dailyJoke): ?>
+                        <p class="joke-text" id="joke-text"><?= htmlspecialchars($dailyJoke['content']) ?></p>
+                    <?php else: ?>
                         <p class="joke-text joke-text--empty" id="joke-text">Zatím tu žádné vtipy nejsou.</p>
                         <?php endif; ?>
                     </div>

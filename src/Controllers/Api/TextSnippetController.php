@@ -11,7 +11,9 @@ class TextSnippetController extends Controller
     public function random(): void
     {
         $type = $_GET['type'] ?? 'joke';
-        $snippet = TextSnippet::getRandom($type);
+        $snippet = $type === 'joke'
+            ? TextSnippet::getDaily($type)
+            : TextSnippet::getRandom($type);
         $this->json(['snippet' => $snippet]);
     }
 

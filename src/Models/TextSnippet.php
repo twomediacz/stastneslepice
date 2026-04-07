@@ -16,6 +16,26 @@ class TextSnippet extends Model
         );
     }
 
+    public static function getDaily(string $type, ?string $date = null): ?array
+    {
+        $count = (int) static::queryValue(
+            'SELECT COUNT(*) FROM text_snippets WHERE type = ?',
+            [$type]
+        );
+
+        if ($count === 0) {
+            return null;
+        }
+
+        $date ??= date('Y-m-d');
+        $offset = (int) (abs(crc32($type . '|' . $date)) % $count);
+
+        return static::queryOne(
+            'SELECT * FROM text_snippets WHERE type = ? ORDER BY id ASC LIMIT 1 OFFSET ?',
+            [$type, $offset]
+        );
+    }
+
     public static function getAllByType(string $type, int $limit = 100): array
     {
         return static::query(
