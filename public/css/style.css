@@ -2388,6 +2388,8 @@ td.td--money, th.td--money { text-align: right; }
     visibility: hidden;
     transition: opacity 0.3s, visibility 0.3s, background 0.2s;
     z-index: 500;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
 }
 
 .scroll-top.is-visible {
@@ -2395,8 +2397,10 @@ td.td--money, th.td--money { text-align: right; }
     visibility: visible;
 }
 
-.scroll-top:hover {
-    background: var(--color-primary-dark);
+@media (hover: hover) {
+    .scroll-top:hover {
+        background: var(--color-primary-dark);
+    }
 }
 
 /* ==========================================

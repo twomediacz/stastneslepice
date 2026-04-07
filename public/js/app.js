@@ -594,10 +594,10 @@ const App = {
     gallery: {
         init() {
             const input = document.getElementById('photo-upload');
-            if (!input) return;
+            const grid = document.getElementById('gallery-grid');
 
             // Klik na fotku otevře lightbox
-            document.getElementById('gallery-grid')?.addEventListener('click', (e) => {
+            grid?.addEventListener('click', (e) => {
                 const item = e.target.closest('.gallery-item');
                 if (!item || e.target.closest('.gallery-item__delete')) return;
                 const img = item.querySelector('img');
@@ -613,6 +613,8 @@ const App = {
                 if (e.key === 'Escape') App.gallery.closeLightbox();
             });
 
+            if (!input) return;
+
             input.addEventListener('change', async () => {
                 const file = input.files[0];
                 if (!file) return;
@@ -625,7 +627,6 @@ const App = {
                 if (result.error) { alert(result.error); return; }
 
                 const photo = result.photo;
-                const grid = document.getElementById('gallery-grid');
                 if (grid && photo) {
                     const div = document.createElement('div');
                     div.className = 'gallery-item';
@@ -2145,13 +2146,22 @@ const App = {
         init() {
             const btn = document.getElementById('scroll-top-btn');
             if (!btn) return;
+            const scrollToTop = () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
 
             window.addEventListener('scroll', () => {
                 btn.classList.toggle('is-visible', window.scrollY > 300);
             }, { passive: true });
 
             btn.addEventListener('click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
+                scrollToTop();
+            });
+
+            btn.addEventListener('pointerup', (e) => {
+                if (e.pointerType === 'mouse') return;
+                e.preventDefault();
+                scrollToTop();
             });
         }
     },
