@@ -109,7 +109,7 @@ $isLoggedIn = \App\Core\Auth::check();
             </div>
 
             <!-- Graf: Teplota & Vlhkost -->
-            <div class="card">
+            <div class="card card--temporarily-hidden">
                 <div class="card__header card__header--blue">
                     <span>&#x1F4CA; Teplota</span>
                     <div class="period-toggle" id="climate-period-toggle">
@@ -147,12 +147,20 @@ $isLoggedIn = \App\Core\Auth::check();
                     </div>
                     <?php endif; ?>
                     <div class="maintenance-table-wrap">
-                        <table class="maintenance-table">
+                        <table class="maintenance-table notes-table">
                             <tbody id="notes-table-body">
                                 <?php foreach ($notes as $note): ?>
                                 <tr data-id="<?= $note['id'] ?>" data-date="<?= $note['note_date'] ?>" data-content="<?= htmlspecialchars($note['content']) ?>">
-                                    <td><?= date('d.m.Y', strtotime($note['note_date'])) ?></td>
-                                    <td><?= htmlspecialchars($note['content']) ?></td>
+                                    <td>
+                                        <div class="note-entry">
+                                            <div class="note-entry__main">
+                                                <span class="note-entry__date"><?= date('d.m.Y', strtotime($note['note_date'])) ?></span>
+                                                <span class="note-entry__text"><?= htmlspecialchars($note['content']) ?></span>
+                                                <div class="note-entry__audio" hidden></div>
+                                            </div>
+                                            <button type="button" class="btn btn--outline btn--round btn--small note-entry__speak" onclick="App.notes.toggleSpeech(this.closest('tr'))" title="Přečíst záznam nahlas">Přehrát</button>
+                                        </div>
+                                    </td>
                                     <?php if ($isLoggedIn): ?>
                                     <td class="maintenance-actions">
                                         <button class="btn-icon" onclick="App.notes.edit(this.closest('tr'))" title="Upravit">&#x270E;</button>
@@ -208,7 +216,7 @@ $isLoggedIn = \App\Core\Auth::check();
             </div>
 
             <!-- Kurník -->
-            <div class="card">
+            <div class="card card--temporarily-hidden">
                 <div class="card__header card__header--brown">&#x1F3E0; Kurník</div>
                 <div class="stat-grid2">
                     <div class="stat-card stat-card--brown">
@@ -223,7 +231,7 @@ $isLoggedIn = \App\Core\Auth::check();
             </div>
 
             <!-- Výběh -->
-            <div class="card">
+            <div class="card card--temporarily-hidden">
                 <div class="card__header card__header--teal">&#x1F33B; Výběh</div>
                 <div class="stat-grid2">
                     <div class="stat-card stat-card--teal">

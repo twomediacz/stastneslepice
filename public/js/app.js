@@ -472,40 +472,45 @@ const App = {
 
     // --- Poznámky ---
     notes: {
+        audioCache: {},
+        loadingRowId: null,
+
         init() {
             const form = document.getElementById('note-form');
-            if (!form) return;
+            if (form) {
+                const dateInput = document.getElementById('note-date');
+                if (dateInput && typeof flatpickr !== 'undefined') {
+                    flatpickr(dateInput, {
+                        locale: 'cs',
+                        dateFormat: 'Y-m-d',
+                        defaultDate: 'today'
+                    });
+                }
 
-            const dateInput = document.getElementById('note-date');
-            if (dateInput && typeof flatpickr !== 'undefined') {
-                flatpickr(dateInput, {
-                    locale: 'cs',
-                    dateFormat: 'Y-m-d',
-                    defaultDate: 'today'
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const fd = new FormData(form);
+                    const id = fd.get('id');
+                    const content = fd.get('content').trim();
+                    const noteDate = fd.get('note_date');
+                    if (!content) return;
+
+                    let result;
+                    if (id) {
+                        result = await App.api.post('/api/notes/update', { id: parseInt(id), content, note_date: noteDate });
+                    } else {
+                        result = await App.api.post('/api/notes', { content, note_date: noteDate });
+                    }
+
+                    if (!result) return;
+                    if (result.error) { alert(result.error); return; }
+
+                    App.notes.updateTable(result.note);
+                    App.notes.hideForm();
                 });
             }
 
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const fd = new FormData(form);
-                const id = fd.get('id');
-                const content = fd.get('content').trim();
-                const noteDate = fd.get('note_date');
-                if (!content) return;
-
-                let result;
-                if (id) {
-                    result = await App.api.post('/api/notes/update', { id: parseInt(id), content, note_date: noteDate });
-                } else {
-                    result = await App.api.post('/api/notes', { content, note_date: noteDate });
-                }
-
-                if (!result) return;
-                if (result.error) { alert(result.error); return; }
-
-                App.notes.updateTable(result.note);
-                App.notes.hideForm();
-            });
+            App.notes.initSpeech();
         },
 
         toggleForm() {
@@ -555,6 +560,7 @@ const App = {
 
         async remove(id) {
             if (!confirm('Smazat poznámku?')) return;
+            App.notes.clearAudioState(String(id));
             const result = await App.api.post('/api/notes/delete', { id });
             if (!result) return;
             const row = document.querySelector(`#notes-table-body tr[data-id="${id}"]`);
@@ -576,17 +582,137 @@ const App = {
                     <button class="btn-icon btn-icon--danger" onclick="App.notes.remove(${note.id})" title="Smazat">&times;</button>
                 </td>` : '';
             const html = `<tr data-id="${note.id}" data-date="${note.note_date}" data-content="${contentEsc}">
-                <td>${dateStr}</td>
-                <td>${contentEsc}</td>
+                <td>${App.notes.renderContentCell(dateStr, contentEsc)}</td>
                 ${noteActionsHtml}
             </tr>`;
 
             const existingRow = tbody.querySelector(`tr[data-id="${note.id}"]`);
+            App.notes.clearAudioState(String(note.id));
             if (existingRow) {
                 existingRow.outerHTML = html;
             } else {
                 tbody.insertAdjacentHTML('afterbegin', html);
             }
+
+            App.notes.refreshSpeechButtons();
+        },
+
+        initSpeech() {
+            window.addEventListener('beforeunload', () => {
+                Object.keys(App.notes.audioCache).forEach((rowId) => App.notes.clearAudioState(rowId));
+            });
+            App.notes.refreshSpeechButtons();
+        },
+
+        async toggleSpeech(tr) {
+            if (!tr) return;
+
+            const rowId = String(tr.dataset.id || '');
+            if (!rowId) return;
+            App.notes.loadingRowId = rowId;
+            App.notes.refreshSpeechButtons();
+
+            try {
+                let audioState = App.notes.audioCache[rowId];
+                if (audioState?.visible) {
+                    App.notes.hideAudioPlayer(tr, rowId);
+                    return;
+                }
+
+                let audioUrl = audioState?.url || null;
+                if (!audioUrl) {
+                    const result = await App.api.post('/api/notes/speech', { id: parseInt(rowId, 10) });
+                    if (!result) return;
+                    if (result.error) {
+                        alert(result.error);
+                        return;
+                    }
+
+                    audioUrl = App.notes.createAudioUrl(result.audio_base64, result.mime_type);
+                    App.notes.audioCache[rowId] = { url: audioUrl, visible: false };
+                }
+
+                App.notes.showAudioPlayer(tr, rowId, audioUrl);
+            } finally {
+                if (App.notes.loadingRowId === rowId) {
+                    App.notes.loadingRowId = null;
+                    App.notes.refreshSpeechButtons();
+                }
+            }
+        },
+
+        createAudioUrl(base64, mimeType) {
+            const binary = window.atob(base64);
+            const bytes = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i += 1) {
+                bytes[i] = binary.charCodeAt(i);
+            }
+            return URL.createObjectURL(new Blob([bytes], { type: mimeType || 'audio/mpeg' }));
+        },
+
+        showAudioPlayer(tr, rowId, audioUrl) {
+            const audioWrap = tr.querySelector('.note-entry__audio');
+            if (!audioWrap) return;
+
+            audioWrap.innerHTML = `<audio controls preload="metadata" class="note-entry__player" src="${audioUrl}"></audio>`;
+            audioWrap.hidden = false;
+            const audio = audioWrap.querySelector('audio');
+            if (audio) {
+                audio.addEventListener('ended', () => App.notes.refreshSpeechButtons(), { once: true });
+            }
+            if (App.notes.audioCache[rowId]) {
+                App.notes.audioCache[rowId].visible = true;
+            }
+            App.notes.refreshSpeechButtons();
+        },
+
+        hideAudioPlayer(tr, rowId) {
+            const audioWrap = tr.querySelector('.note-entry__audio');
+            if (audioWrap) {
+                const player = audioWrap.querySelector('audio');
+                if (player) player.pause();
+                audioWrap.innerHTML = '';
+                audioWrap.hidden = true;
+            }
+            if (App.notes.audioCache[rowId]) {
+                App.notes.audioCache[rowId].visible = false;
+            }
+            App.notes.refreshSpeechButtons();
+        },
+
+        clearAudioState(rowId) {
+            const key = String(rowId);
+            const state = App.notes.audioCache[key];
+            if (state?.url) {
+                URL.revokeObjectURL(state.url);
+            }
+            delete App.notes.audioCache[key];
+        },
+
+        refreshSpeechButtons() {
+            document.querySelectorAll('.note-entry__speak').forEach((btn) => {
+                const tr = btn.closest('tr');
+                const rowId = tr?.dataset?.id || '';
+                const isLoading = !!tr && App.notes.loadingRowId === rowId;
+                const isVisible = !!App.notes.audioCache[rowId]?.visible;
+                btn.disabled = isLoading;
+                btn.classList.toggle('is-speaking', isVisible);
+                btn.textContent = isLoading ? 'Načítám...' : (isVisible ? 'Skrýt přehrávač' : 'Přehrát');
+                btn.title = isLoading
+                    ? 'Připravuji audio'
+                    : (isVisible ? 'Skrýt audio přehrávač' : 'Načíst audio přehrávač');
+            });
+        },
+
+        renderContentCell(dateStr, contentEsc) {
+            return `<div class="note-entry">
+                <div class="note-entry__main">
+                    <span class="note-entry__date">${dateStr}</span>
+                    <span class="note-entry__text">${contentEsc}</span>
+                    <div class="note-entry__audio" hidden></div>
+                </div>
+                <button type="button" class="btn btn--outline btn--round btn--small note-entry__speak" onclick="App.notes.toggleSpeech(this.closest('tr'))" title="Přečíst záznam nahlas">Přehrát</button>
+            </div>`;
         }
     },
 

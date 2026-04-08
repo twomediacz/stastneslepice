@@ -50,6 +50,30 @@ final class ApiNoteSnippetAndMaintenanceControllerTest extends DatabaseTestCase
         self::assertSame('Nakoupit zrní', $indexPayload['notes'][0]['content']);
     }
 
+    public function testNoteSpeechRejectsInvalidId(): void
+    {
+        $_POST = ['id' => 0];
+
+        $controller = new NoteController();
+        $response = TestResponse::capture(static fn() => $controller->speech());
+        $payload = json_decode($response['output'], true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(400, $response['status']);
+        self::assertSame('Neplatné ID poznámky.', $payload['error']);
+    }
+
+    public function testNoteSpeechReturnsNotFoundForMissingNote(): void
+    {
+        $_POST = ['id' => 999];
+
+        $controller = new NoteController();
+        $response = TestResponse::capture(static fn() => $controller->speech());
+        $payload = json_decode($response['output'], true, 512, JSON_THROW_ON_ERROR);
+
+        self::assertSame(404, $response['status']);
+        self::assertSame('Poznámka nebyla nalezena.', $payload['error']);
+    }
+
     public function testSnippetStoreAndRandomEndpointWork(): void
     {
         $_SESSION = ['user_id' => 1];

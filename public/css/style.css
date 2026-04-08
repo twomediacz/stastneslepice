@@ -224,6 +224,10 @@ a { color: var(--color-primary); }
     overflow: hidden;
 }
 
+.card--temporarily-hidden {
+    display: none;
+}
+
 .card__header {
     padding: 0.6rem var(--card-padding);
     font-size: 1.05rem;
@@ -1147,6 +1151,59 @@ a { color: var(--color-primary); }
     font-family: var(--font);
 }
 
+.note-entry {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.55rem;
+    width: 100%;
+}
+
+.note-entry__text {
+    display: block;
+}
+
+.note-entry__date {
+    display: inline-block;
+    margin-bottom: 0.15rem;
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.note-entry__main {
+    flex: 1;
+    min-width: 0;
+}
+
+.note-entry__audio {
+    margin-top: 0.15rem;
+}
+
+.note-entry__player {
+    width: min(100%, 420px);
+    height: 40px;
+}
+
+.note-entry__speak {
+    min-width: 0;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.8rem;
+    line-height: 1.2;
+}
+
+.note-entry__speak.is-speaking {
+    background: var(--color-primary);
+    border-color: var(--color-primary);
+    color: #fff;
+}
+
+.note-entry__speak:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
 /* ==========================================
    AUTH PAGES
    ========================================== */
@@ -1549,6 +1606,23 @@ a { color: var(--color-primary); }
     background: #e8f1fa;
     font-weight: 700;
     font-size: 0.78rem;
+}
+
+.notes-table {
+    table-layout: auto;
+}
+
+.notes-table td:first-child {
+    width: auto;
+}
+
+.notes-table td:last-child {
+    width: 3.25rem;
+}
+
+.notes-table .maintenance-actions {
+    width: 3.25rem;
+    white-space: nowrap;
 }
 
 .maintenance-actions {
@@ -2621,6 +2695,33 @@ td.td--money, th.td--money { text-align: right; }
     .maintenance-table th:nth-child(1) {
         white-space: nowrap;
         width: 5.5rem;
+    }
+
+    .notes-table td:nth-child(1),
+    .notes-table th:nth-child(1) {
+        white-space: normal;
+        width: auto;
+    }
+
+    .notes-table td:last-child,
+    .notes-table th:last-child {
+        width: 3.25rem;
+    }
+
+    .note-entry__text {
+        font-size: 0.92rem;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+        word-break: break-word;
+    }
+
+    .note-entry__date {
+        font-size: 0.72rem;
+    }
+
+    .note-entry__player {
+        width: 100%;
+        max-width: 100%;
     }
 
     .egg-table td:nth-child(2),

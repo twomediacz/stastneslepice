@@ -63,6 +63,7 @@ $router->post('/api/climate', [ClimateController::class, 'store']);
 // API – poznámky
 $router->get('/api/notes', [NoteController::class, 'index']);
 $router->post('/api/notes', [NoteController::class, 'store']);
+$router->post('/api/notes/speech', [NoteController::class, 'speech']);
 $router->post('/api/notes/update', [NoteController::class, 'update']);
 $router->post('/api/notes/delete', [NoteController::class, 'destroy']);
 
