@@ -18,6 +18,7 @@ use App\Controllers\Api\PhotoController;
 use App\Controllers\Api\SettingController;
 use App\Controllers\Api\WeatherController;
 use App\Controllers\ChickensController;
+use App\Controllers\DiaryController;
 use App\Controllers\LiveController;
 use App\Controllers\MaintenanceController as MaintenancePageController;
 use App\Controllers\Api\MaintenanceController;
@@ -42,11 +43,15 @@ $router->get('/logout', [AuthController::class, 'logout']);
 // Stránky (vyžadují přihlášení – řeší controllery)
 $router->get('/', [HomeController::class, 'index']);
 $router->get('/slepice', [ChickensController::class, 'index']);
+$router->get('/denik', [DiaryController::class, 'index']);
+$router->get('/deník', [DiaryController::class, 'index']);
 $router->get('/udrzba', [MaintenancePageController::class, 'index']);
 $router->get('/krmeni', [FeedingPageController::class, 'index']);
 $router->get('/finance', [FinancePageController::class, 'index']);
 $router->get('/zive', [LiveController::class, 'index']);
 $router->get('/nastaveni', [UsersController::class, 'index']);
+$router->get('/nastaveni/resize-fotky', [UsersController::class, 'resizePhotos']);
+$router->post('/nastaveni/resize-fotky', [UsersController::class, 'resizePhotos']);
 $router->get('/almanach', [AlmanachController::class, 'index']);
 $router->get('/almanach/pokrocily', [AlmanachController::class, 'pokrocily']);
 

@@ -13,6 +13,7 @@ final class RouterTest extends TestCase
     {
         http_response_code(200);
         RouterTestController::$called = false;
+        unset($_SERVER['SCRIPT_NAME']);
     }
 
     public function testDispatchNormalizesTrailingSlashAndCallsRegisteredHandler(): void
@@ -48,6 +49,33 @@ final class RouterTest extends TestCase
 
         ob_start();
         $router->dispatch('GET', '/api/test?days=30&group=month');
+        $output = ob_get_clean();
+
+        self::assertTrue(RouterTestController::$called);
+        self::assertSame('ok', $output);
+    }
+
+    public function testDispatchStripsScriptDirectoryFromRoutePath(): void
+    {
+        $_SERVER['SCRIPT_NAME'] = '/stastneslepice/public/index.php';
+        $router = new Router();
+        $router->get('/denik', [RouterTestController::class, 'show']);
+
+        ob_start();
+        $router->dispatch('GET', '/stastneslepice/public/denik');
+        $output = ob_get_clean();
+
+        self::assertTrue(RouterTestController::$called);
+        self::assertSame('ok', $output);
+    }
+
+    public function testDispatchSupportsIndexPhpPathInfoAndEncodedUri(): void
+    {
+        $router = new Router();
+        $router->get('/deník', [RouterTestController::class, 'show']);
+
+        ob_start();
+        $router->dispatch('GET', '/index.php/den%C3%ADk');
         $output = ob_get_clean();
 
         self::assertTrue(RouterTestController::$called);

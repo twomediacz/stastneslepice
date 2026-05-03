@@ -25,6 +25,23 @@ final class FrontControllerSmokeTest extends DatabaseTestCase
         self::assertStringContainsString('Kurník – údržba, prostředí a provoz', $result['stdout']);
     }
 
+    public function testDiaryRouteRendersThroughPublicIndex(): void
+    {
+        $result = $this->runFrontController('/denik');
+
+        self::assertSame(0, $result['exitCode'], $result['stderr']);
+        self::assertStringContainsString('Deník chovatele', $result['stdout']);
+        self::assertStringContainsString('href="/denik"', $result['stdout']);
+    }
+
+    public function testDiaryRouteRendersWhenRequestUriContainsPublicPrefix(): void
+    {
+        $result = $this->runFrontController('/public/denik');
+
+        self::assertSame(0, $result['exitCode'], $result['stderr']);
+        self::assertStringContainsString('Deník chovatele', $result['stdout']);
+    }
+
     public function testSettingsApiRouteReturnsPublicSettingsThroughFrontController(): void
     {
         $result = $this->runFrontController('/api/settings');

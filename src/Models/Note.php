@@ -14,6 +14,13 @@ class Note extends Model
         );
     }
 
+    public static function getAllOrdered(): array
+    {
+        return static::query(
+            "SELECT * FROM notes ORDER BY note_date DESC, id DESC"
+        );
+    }
+
     public static function add(string $date, string $content): int
     {
         return static::insert([

@@ -140,7 +140,7 @@ const App = {
                 totalEl.textContent = '\u{1F95A} ' + total.toLocaleString('cs-CZ');
                 totalEl.classList.toggle('stat-card__value--small', total > 999);
             }
-            if (avgEl) avgEl.textContent = avg.toLocaleString('cs-CZ', { minimumFractionDigits: 1 });
+            if (avgEl) avgEl.textContent = '\u{1F423} ' + avg.toLocaleString('cs-CZ', { minimumFractionDigits: 1 });
         }
     },
 
@@ -860,8 +860,21 @@ const App = {
     // --- Slepice ---
     chickens: {
         init() {
+            App.chickens.initLightbox();
+
             const form = document.getElementById('chicken-form');
             if (!form) return;
+            const ringColor = document.getElementById('ch-ring-color');
+            const ringColorValue = document.getElementById('ch-ring-color-value');
+
+            const syncRingColorValue = () => {
+                if (ringColor && ringColorValue) {
+                    ringColorValue.textContent = ringColor.value;
+                }
+            };
+
+            ringColor?.addEventListener('input', syncRingColorValue);
+            syncRingColorValue();
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
@@ -912,6 +925,8 @@ const App = {
                 form.name.value = data.name || '';
                 form.breed.value = data.breed || '';
                 form.color.value = data.color || '';
+                form.ring_color.value = data.ring_color || '#f2c94c';
+                document.getElementById('ch-ring-color-value').textContent = form.ring_color.value;
                 form.status.value = data.status || 'active';
                 form.birth_date.value = data.birth_date || '';
                 form.acquired_date.value = data.acquired_date || '';
@@ -922,6 +937,8 @@ const App = {
             } else {
                 title.textContent = 'Přidat slepici';
                 form.querySelector('input[name="id"]').value = '';
+                form.ring_color.value = '#f2c94c';
+                document.getElementById('ch-ring-color-value').textContent = form.ring_color.value;
             }
 
             wrap.style.display = '';
@@ -936,6 +953,15 @@ const App = {
         edit(id) {
             const data = (window.__chickensData || []).find(c => c.id == id);
             if (data) App.chickens.showForm(data);
+        },
+
+        initLightbox() {
+            document.querySelectorAll('.chicken-card__photo img').forEach((img) => {
+                img.addEventListener('click', (e) => {
+                    if (e.target.closest('.chicken-card__upload-btn')) return;
+                    App.gallery.openLightbox(img.src);
+                });
+            });
         },
 
         async remove(id) {

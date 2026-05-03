@@ -5,9 +5,12 @@ namespace App\Controllers\Api;
 use App\Controllers\Controller;
 use App\Core\Auth;
 use App\Models\Chicken;
+use App\Services\ImageUploadService;
 
 class ChickenController extends Controller
 {
+    private const PHOTO_MAX_LONG_SIDE = 1080;
+
     public function index(): void
     {
         $this->json([
@@ -31,6 +34,7 @@ class ChickenController extends Controller
             'name' => $name,
             'breed' => trim($data['breed'] ?? '') ?: null,
             'color' => trim($data['color'] ?? '') ?: null,
+            'ring_color' => $this->normalizeRingColor($data['ring_color'] ?? null),
             'birth_date' => $data['birth_date'] ?: null,
             'acquired_date' => $data['acquired_date'] ?: null,
             'end_date' => $data['end_date'] ?: null,
@@ -64,6 +68,7 @@ class ChickenController extends Controller
             'name' => $name,
             'breed' => trim($data['breed'] ?? '') ?: null,
             'color' => trim($data['color'] ?? '') ?: null,
+            'ring_color' => $this->normalizeRingColor($data['ring_color'] ?? null),
             'birth_date' => $data['birth_date'] ?: null,
             'acquired_date' => $data['acquired_date'] ?: null,
             'end_date' => $data['end_date'] ?: null,
@@ -94,7 +99,7 @@ class ChickenController extends Controller
         $file = $_FILES['photo'];
         $allowed = ['image/jpeg', 'image/png', 'image/webp'];
 
-        if (!in_array($file['type'], $allowed)) {
+        if (!in_array($file['type'], $allowed, true)) {
             $this->jsonError('Povolené formáty: JPEG, PNG, WebP.');
         }
 
@@ -111,8 +116,8 @@ class ChickenController extends Controller
             mkdir($uploadDir, 0755, true);
         }
 
-        if (!move_uploaded_file($file['tmp_name'], $uploadDir . $filename)) {
-            $this->jsonError('Nepodařilo se uložit soubor.', 500);
+        if (!ImageUploadService::saveResized($file['tmp_name'], $uploadDir . $filename, $ext, self::PHOTO_MAX_LONG_SIDE)) {
+            $this->jsonError('Nepodařilo se zpracovat obrázek.', 500);
         }
 
         // Smazat starou fotku
@@ -148,5 +153,19 @@ class ChickenController extends Controller
 
         Chicken::delete($id);
         $this->json(['success' => true]);
+    }
+
+    private function normalizeRingColor(?string $color): ?string
+    {
+        $color = trim((string) $color);
+        if ($color === '') {
+            return null;
+        }
+
+        if (!preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+            $this->jsonError('Barva kroužku musí být ve formátu #RRGGBB.');
+        }
+
+        return strtolower($color);
     }
 }

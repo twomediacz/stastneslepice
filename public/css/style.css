@@ -409,7 +409,7 @@ a { color: var(--color-primary); }
    ========================================== */
 .site-nav {
     display: flex;
-    gap: 0.3rem;
+    /* gap: 0.3rem; */
     width: 100%;
     padding-top: 0.3rem;
     padding-bottom: 0.3rem;
@@ -613,6 +613,55 @@ a { color: var(--color-primary); }
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
+}
+
+.diary {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+}
+
+.resize-photos__form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: 0.8rem;
+    margin: 1rem 0;
+}
+
+.resize-photos__form label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.resize-photos__form input[type="number"] {
+    width: 8rem;
+    padding: 0.45rem 0.55rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-family: var(--font);
+}
+
+.resize-photos__check {
+    flex-direction: row !important;
+    align-items: center;
+    padding-bottom: 0.45rem;
+}
+
+.resize-photos__output {
+    max-height: 34rem;
+    overflow: auto;
+    margin: 1rem 0 0;
+    padding: 0.8rem;
+    background: #2a241d;
+    color: #f8f1df;
+    border-radius: var(--radius-sm);
+    font-size: 0.82rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
 }
 
 /* ==========================================
@@ -884,6 +933,15 @@ a { color: var(--color-primary); }
 
 .stat-card--maintenance .stat-card__value {
     color: #7a5c10;
+}
+
+.stat-card--visits {
+    background: linear-gradient(180deg, #e4f4f7 0%, #f5fbfc 100%);
+    border-color: #a7d3dc;
+}
+
+.stat-card--visits .stat-card__value {
+    color: #286676;
 }
 
 .stat-card__value {
@@ -1378,7 +1436,7 @@ a { color: var(--color-primary); }
 .chicken-card__photo {
     position: relative;
     width: 100%;
-    aspect-ratio: 4/3;
+    aspect-ratio: 2/3;
     background: #f0f0e8;
     display: flex;
     align-items: center;
@@ -1390,6 +1448,7 @@ a { color: var(--color-primary); }
     width: 100%;
     height: 100%;
     object-fit: cover;
+    cursor: pointer;
 }
 
 .chicken-card__no-photo {
@@ -1427,6 +1486,12 @@ a { color: var(--color-primary); }
     margin-bottom: 0.2rem;
 }
 
+.chicken-card__title {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+}
+
 .chicken-status {
     display: inline-block;
     padding: 0.1rem 0.5rem;
@@ -1459,6 +1524,70 @@ a { color: var(--color-primary); }
 .chicken-detail--note {
     font-style: italic;
     margin-top: 0.3rem;
+}
+
+.chicken-detail--ring {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.chicken-ring,
+.chicken-color-picker input[type="color"] {
+    width: 1.35rem;
+    height: 1.35rem;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 1px rgba(50, 40, 25, 0.25);
+    background: var(--ring-color, #f2c94c);
+    flex: 0 0 auto;
+}
+
+.chicken-ring-cell,
+.chicken-color-picker {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+}
+
+.chicken-ring--card {
+    width: 1.55rem;
+    height: 1.55rem;
+}
+
+.chicken-ring--table {
+    width: 1.45rem;
+    height: 1.45rem;
+}
+
+.chicken-color-picker input[type="color"] {
+    padding: 0;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.chicken-color-picker input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.chicken-color-picker input[type="color"]::-webkit-color-swatch {
+    border: 0;
+    border-radius: 50%;
+}
+
+.chicken-color-picker input[type="color"]::-moz-color-swatch {
+    border: 0;
+    border-radius: 50%;
+}
+
+.chicken-color-picker__value {
+    font-size: 0.82rem;
+    color: var(--color-text-muted);
+    font-family: monospace;
 }
 
 .chicken-card__actions {
@@ -1499,6 +1628,11 @@ a { color: var(--color-primary); }
     border-radius: var(--radius-sm);
     font-size: 0.88rem;
     font-family: var(--font);
+}
+
+.chicken-form__grid .form-group input[type="color"] {
+    width: 1.35rem;
+    padding: 0;
 }
 
 .chicken-form__actions {
@@ -1570,7 +1704,7 @@ a { color: var(--color-primary); }
 }
 
 .maintenance-table-wrap {
-    max-height: 500px;
+    max-height: 800px;
     overflow-y: auto;
     margin-top: 1rem;
 }
@@ -2492,7 +2626,7 @@ td.td--money, th.td--money { text-align: right; }
     }
 
     .header-left h1 {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .header-content {
@@ -2611,6 +2745,7 @@ td.td--money, th.td--money { text-align: right; }
     .dashboard__right > .card:nth-child(6) { order: 7; }  /* Počasí */
     .dashboard__right > .card:nth-child(7) { order: 10; } /* Vtip */
     .dashboard__right > .card:nth-child(8) { order: 11; } /* Fotky */
+    .dashboard-card--visits { order: 12; }                /* Návštěvnost */
 
     .charts-row {
         grid-template-columns: 1fr;

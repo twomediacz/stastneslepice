@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS chickens (
     name VARCHAR(100) NOT NULL,
     breed VARCHAR(100) DEFAULT NULL,
     color VARCHAR(100) DEFAULT NULL,
+    ring_color CHAR(7) DEFAULT NULL,
     birth_date DATE DEFAULT NULL,
     acquired_date DATE DEFAULT NULL,
     end_date DATE DEFAULT NULL,

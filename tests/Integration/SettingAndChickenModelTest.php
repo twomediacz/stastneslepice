@@ -33,4 +33,11 @@ final class SettingAndChickenModelTest extends DatabaseTestCase
         self::assertSame('Nemocná', Chicken::statusLabel('sick'));
         self::assertSame('#60c7ff', Chicken::statusColor('given_away'));
     }
+
+    public function testChickenRingColorReturnsOnlyStoredValidColor(): void
+    {
+        self::assertNull(Chicken::ringColor(null));
+        self::assertNull(Chicken::ringColor('modrá'));
+        self::assertSame('#abcdef', Chicken::ringColor('#ABCDEF'));
+    }
 }

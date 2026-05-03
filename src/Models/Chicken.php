@@ -48,4 +48,14 @@ class Chicken extends Model
             default => '#777',
         };
     }
+
+    public static function ringColor(?string $color): ?string
+    {
+        $color = trim((string) $color);
+        if ($color === '' || !preg_match('/^#[0-9a-fA-F]{6}$/', $color)) {
+            return null;
+        }
+
+        return strtolower($color);
+    }
 }

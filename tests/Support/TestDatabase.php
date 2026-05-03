@@ -102,6 +102,7 @@ CREATE TABLE chickens (
     name TEXT NOT NULL,
     breed TEXT DEFAULT NULL,
     color TEXT DEFAULT NULL,
+    ring_color TEXT DEFAULT NULL,
     birth_date TEXT DEFAULT NULL,
     acquired_date TEXT DEFAULT NULL,
     end_date TEXT DEFAULT NULL,
@@ -185,11 +186,20 @@ CREATE TABLE text_snippets (
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE visit_stats (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    page TEXT NOT NULL DEFAULT '/',
+    visitor_id TEXT NOT NULL,
+    visited_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE INDEX idx_climate_recorded ON climate_records (recorded_at, location);
 CREATE INDEX idx_feeding_date ON feeding_records (record_date);
 CREATE INDEX idx_feeding_type_date ON feeding_records (feed_type_id, record_date);
 CREATE INDEX idx_expense_date ON expenses (expense_date);
 CREATE INDEX idx_egg_transaction_date ON egg_transactions (transaction_date);
+CREATE INDEX idx_visit_stats_page_time ON visit_stats (page, visited_at);
+CREATE INDEX idx_visit_stats_page_visitor ON visit_stats (page, visitor_id);
 SQL);
     }
 

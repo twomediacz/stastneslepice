@@ -6,6 +6,12 @@ $outHum = $climateOutdoor['humidity'] ?? '–';
 $todayCount = $todayEggs['egg_count'] ?? 0;
 $todayNote = $todayEggs['note'] ?? '';
 $isLoggedIn = \App\Core\Auth::check();
+$visitStats = $visitStats ?? [
+    'visits_total' => 0,
+    'visits_last_day' => 0,
+    'unique_total' => 0,
+    'unique_last_day' => 0,
+];
 ?>
 
 <section class="dashboard">
@@ -125,55 +131,7 @@ $isLoggedIn = \App\Core\Auth::check();
             </div>
 
             <!-- Poznámky -->
-            <div class="card">
-                <div class="card__header card__header--note">
-                    <span>&#x1F4DD; Deník chovatele</span>
-                    <?php if ($isLoggedIn): ?>
-                    <button type="button" class="btn btn--primary btn--round" onclick="App.notes.toggleForm()">Přidat</button>
-                    <?php endif; ?>
-                </div>
-                <div class="card__inner">
-                    <?php if ($isLoggedIn): ?>
-                    <div id="note-form-wrap" class="egg-form-wrap" style="display:none">
-                        <form id="note-form" class="egg-form">
-                            <input type="hidden" name="id" value="">
-                            <input type="text" id="note-date" name="note_date" placeholder="Datum" required class="egg-form__date" readonly>
-                            <textarea name="content" placeholder="Poznámka" required class="egg-form__note" rows="1"></textarea>
-                            <div class="form-buttons">
-                                <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
-                                <button type="button" class="btn btn--outline btn--round btn--small" onclick="App.notes.hideForm()">Zrušit</button>
-                            </div>
-                        </form>
-                    </div>
-                    <?php endif; ?>
-                    <div class="maintenance-table-wrap">
-                        <table class="maintenance-table notes-table">
-                            <tbody id="notes-table-body">
-                                <?php foreach ($notes as $note): ?>
-                                <tr data-id="<?= $note['id'] ?>" data-date="<?= $note['note_date'] ?>" data-content="<?= htmlspecialchars($note['content']) ?>">
-                                    <td>
-                                        <div class="note-entry">
-                                            <div class="note-entry__main">
-                                                <span class="note-entry__date"><?= date('d.m.Y', strtotime($note['note_date'])) ?></span>
-                                                <span class="note-entry__text"><?= htmlspecialchars($note['content']) ?></span>
-                                                <div class="note-entry__audio" hidden></div>
-                                            </div>
-                                            <button type="button" class="btn btn--outline btn--round btn--small note-entry__speak" onclick="App.notes.toggleSpeech(this.closest('tr'))" title="Přečíst záznam nahlas">Přehrát</button>
-                                        </div>
-                                    </td>
-                                    <?php if ($isLoggedIn): ?>
-                                    <td class="maintenance-actions">
-                                        <button class="btn-icon" onclick="App.notes.edit(this.closest('tr'))" title="Upravit">&#x270E;</button>
-                                        <button class="btn-icon btn-icon--danger" onclick="App.notes.remove(<?= $note['id'] ?>)" title="Smazat">&times;</button>
-                                    </td>
-                                    <?php endif; ?>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
+            <?php require __DIR__ . '/../partials/note_card.php'; ?>
 
         </div>
 
@@ -185,7 +143,7 @@ $isLoggedIn = \App\Core\Auth::check();
                 <div class="card__header card__header--green">&#x1F522; Statistika</div>
                 <div class="stat-grid">
                     <div class="stat-card">
-                        <span class="stat-card__value<?= $totalEggs > 999 ? ' stat-card__value--small' : '' ?>" id="stat-total">&#x1F414; <?= $chickenCount['active'] ?></span>
+                        <span class="stat-card__value<?= $totalEggs > 999 ? ' stat-card__value--small' : '' ?>">&#x1F414; <?= $chickenCount['active'] ?></span>
                         <span class="stat-card__label">Slepic</span>
                     </div>
                     <div class="stat-card">
@@ -193,7 +151,7 @@ $isLoggedIn = \App\Core\Auth::check();
                         <span class="stat-card__label">Vajec celkem</span>
                     </div>
                     <div class="stat-card">
-                        <span class="stat-card__value<?= $totalEggs > 999 ? ' stat-card__value--small' : '' ?>" id="stat-total" id="stat-avg">&#x1F423; <?= number_format($dailyAvg, 1, ',', ' ') ?></span>
+                        <span class="stat-card__value<?= $totalEggs > 999 ? ' stat-card__value--small' : '' ?>" id="stat-avg">&#x1F423; <?= number_format($dailyAvg, 1, ',', ' ') ?></span>
                         <span class="stat-card__label">Průměr / den</span>
                     </div>
                 </div>
@@ -351,17 +309,34 @@ $isLoggedIn = \App\Core\Auth::check();
                 </div>
             </div>
 
+            <!-- Návštěvnost -->
+            <div class="card dashboard-card--visits">
+                <div class="card__header card__header--green">&#x1F441; Návštěvnost</div>
+                <div class="stat-grid2">
+                    <div class="stat-card stat-card--visits">
+                        <span class="stat-card__value<?= $visitStats['visits_total'] > 999 ? ' stat-card__value--small' : '' ?>">&#x1F441; <?= number_format((int) $visitStats['visits_total'], 0, ',', ' ') ?></span>
+                        <span class="stat-card__label">Zobrazení celkem</span>
+                    </div>
+                    <div class="stat-card stat-card--visits">
+                        <span class="stat-card__value<?= $visitStats['visits_last_day'] > 999 ? ' stat-card__value--small' : '' ?>">&#x1F441; <?= number_format((int) $visitStats['visits_last_day'], 0, ',', ' ') ?></span>
+                        <span class="stat-card__label">Zobrazení za 24 h</span>
+                    </div>
+                    <div class="stat-card stat-card--visits">
+                        <span class="stat-card__value<?= $visitStats['unique_total'] > 999 ? ' stat-card__value--small' : '' ?>">&#x1F464; <?= number_format((int) $visitStats['unique_total'], 0, ',', ' ') ?></span>
+                        <span class="stat-card__label">Unikátních lidí celkem</span>
+                    </div>
+                    <div class="stat-card stat-card--visits">
+                        <span class="stat-card__value<?= $visitStats['unique_last_day'] > 999 ? ' stat-card__value--small' : '' ?>">&#x1F464; <?= number_format((int) $visitStats['unique_last_day'], 0, ',', ' ') ?></span>
+                        <span class="stat-card__label">Unikátních lidí za 24 h</span>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
     </div>
 
 </section>
-
-<!-- Lightbox -->
-<div id="lightbox" class="lightbox" onclick="App.gallery.closeLightbox()">
-    <button class="lightbox__close" onclick="App.gallery.closeLightbox()">&times;</button>
-    <img id="lightbox-img" class="lightbox__img" src="" alt="">
-</div>
 
 <!-- Data pro JS -->
 <script>

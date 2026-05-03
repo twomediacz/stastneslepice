@@ -43,6 +43,13 @@ $isLoggedIn = \App\Core\Auth::check();
                         <input type="text" id="ch-color" name="color">
                     </div>
                     <div class="form-group">
+                        <label for="ch-ring-color">Barva kroužku</label>
+                        <div class="chicken-color-picker">
+                            <input type="color" id="ch-ring-color" name="ring_color" value="#f2c94c">
+                            <span class="chicken-color-picker__value" id="ch-ring-color-value">#f2c94c</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <label for="ch-status">Stav</label>
                         <select id="ch-status" name="status">
                             <?php foreach ($statuses as $val => $label): ?>
@@ -82,6 +89,7 @@ $isLoggedIn = \App\Core\Auth::check();
             <p class="text-muted">Zatím nejsou evidovány žádné slepice.</p>
         <?php endif; ?>
         <?php foreach ($chickens as $ch): ?>
+        <?php $ringColor = Chicken::ringColor($ch['ring_color'] ?? null); ?>
         <div class="chicken-card card" data-id="<?= $ch['id'] ?>">
             <div class="chicken-card__photo">
                 <?php if ($ch['photo']): ?>
@@ -98,7 +106,12 @@ $isLoggedIn = \App\Core\Auth::check();
                 <?php endif; ?>
             </div>
             <div class="chicken-card__body">
-                <h3><?= htmlspecialchars($ch['name']) ?></h3>
+                <h3 class="chicken-card__title">
+                    <?php if ($ringColor): ?>
+                    <span class="chicken-ring chicken-ring--card" style="--ring-color:<?= htmlspecialchars($ringColor) ?>" title="Kroužek: <?= htmlspecialchars($ringColor) ?>" aria-label="Barva kroužku <?= htmlspecialchars($ringColor) ?>"></span>
+                    <?php endif; ?>
+                    <?= htmlspecialchars($ch['name']) ?>
+                </h3>
                 <?php if ($ch['breed']): ?><p class="chicken-detail">Plemeno: <?= htmlspecialchars($ch['breed']) ?></p><?php endif; ?>
                 <?php if ($ch['color']): ?><p class="chicken-detail">Barva: <?= htmlspecialchars($ch['color']) ?></p><?php endif; ?>
                 <?php if ($ch['status'] === 'deceased' && $ch['end_date']): ?>
@@ -127,6 +140,7 @@ $isLoggedIn = \App\Core\Auth::check();
                 <table class="chickens-tbl">
                     <thead>
                         <tr>
+                            <th>Kroužek</th>
                             <th>Jméno</th>
                             <th>Plemeno</th>
                             <th>Barva</th>
@@ -140,7 +154,15 @@ $isLoggedIn = \App\Core\Auth::check();
                     </thead>
                     <tbody id="chickens-tbody">
                         <?php foreach ($chickens as $ch): ?>
+                        <?php $ringColor = Chicken::ringColor($ch['ring_color'] ?? null); ?>
                         <tr data-id="<?= $ch['id'] ?>">
+                            <td>
+                                <?php if ($ringColor): ?>
+                                <span class="chicken-ring-cell" title="Kroužek: <?= htmlspecialchars($ringColor) ?>">
+                                    <span class="chicken-ring chicken-ring--table" style="--ring-color:<?= htmlspecialchars($ringColor) ?>" aria-label="Barva kroužku <?= htmlspecialchars($ringColor) ?>"></span>
+                                </span>
+                                <?php endif; ?>
+                            </td>
                             <td><strong><?= htmlspecialchars($ch['name']) ?></strong></td>
                             <td><?= htmlspecialchars($ch['breed'] ?? '') ?></td>
                             <td><?= htmlspecialchars($ch['color'] ?? '') ?></td>

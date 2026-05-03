@@ -12,11 +12,14 @@ use App\Models\Note;
 use App\Models\Photo;
 use App\Models\BeddingChange;
 use App\Models\TextSnippet;
+use App\Models\VisitStat;
 
 class HomeController
 {
     public function index(): void
     {
+        VisitStat::recordHomeVisit();
+
         $settings = Setting::getAll();
         $todayEggs = EggRecord::getByDate(date('Y-m-d'));
         $recentEggs = EggRecord::getRecent(14);
@@ -25,8 +28,9 @@ class HomeController
         $totalEggs = EggRecord::getTotalEggs();
         $dailyAvg = EggRecord::getDailyAverage();
         $chickenCount = Chicken::getCount();
-        $recentNotes = Note::getRecent(10);
+        $notes = Note::getAllOrdered();
         $photos = Photo::getAll(12);
+        $visitStats = VisitStat::getHomeSummary();
 
         $dailyJoke = TextSnippet::getDaily('joke');
 
@@ -47,8 +51,9 @@ class HomeController
             'totalEggs' => $totalEggs,
             'dailyAvg' => $dailyAvg,
             'chickenCount' => $chickenCount,
-            'notes' => $recentNotes,
+            'notes' => $notes,
             'photos' => $photos,
+            'visitStats' => $visitStats,
             'lastBeddingDate' => $lastBeddingDate,
             'nextBeddingDate' => $nextBeddingDate,
             'dailyJoke' => $dailyJoke,
