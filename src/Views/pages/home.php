@@ -92,7 +92,7 @@ $visitStats = $visitStats ?? [
             </div>
 
             <!-- Graf: Teplota & Vlhkost -->
-
+            
             <div class="card">
                 <div class="card__header card__header--blue">
                     <span>&#x1F4CA; Teplota & vlhkost</span>
@@ -215,7 +215,7 @@ $visitStats = $visitStats ?? [
       <!--      <div class="card">
                 <div class="card__header card__header--joke">
                     <span>&#x1F414; Vtip</span>
-
+                   
                 </div>
                 <div class="card__inner">
                     <?php if ($isLoggedIn): ?>
@@ -265,7 +265,7 @@ $visitStats = $visitStats ?? [
                     </div>
                 </div>
             </div>
-
+            
             <!-- Pohádka o slepicích -->
         <!--    <div class="card">
                 <div class="card__header card__header--video">&#x1F3AC; Pohádka o slepicích</div>

@@ -1,0 +1,14 @@
+{
+    "name": "capekd/stastneslepice",
+    "description": "Webová aplikace pro sledování domácího chovu slepic",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=8.1"
+    }
+}
