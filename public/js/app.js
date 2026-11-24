@@ -195,142 +195,213 @@ const App = {
             }
         },
 
+        // Teplota a vlhkost: dva panely nad sebou se společnou časovou osou
+        // (nahoře teplota, dole vlhkost). Barva = místo, legenda jen Kurník / Venku.
         async loadClimateChart(period) {
             period = period || 'day';
             const canvas = document.getElementById('chart-climate');
             if (!canvas) return;
 
-            let labels, datasets;
+            const isDay = period === 'day';
+            const PLACES = [
+                { key: 'coop',    name: 'Kurník', color: '#b87949', band: 'rgba(184, 121, 73, 0.18)' },
+                { key: 'outdoor', name: 'Výběh',  color: '#26a08a', band: 'rgba(38, 160, 138, 0.18)' }
+            ];
+            const METRICS = [
+                // key = předpona sloupců temp_min/temp_max, hum_min/hum_max u denních a měsíčních souhrnů
+                { key: 'temp', field: 'temperature', name: 'Teplota', unit: ' °C', axis: 'yTemp' },
+                { key: 'hum',  field: 'humidity',    name: 'Vlhkost', unit: ' %',  axis: 'yHum' }
+            ];
+            // Měří se každých 5 minut. Díra delší než 15 minut (3 vynechaná měření) přeruší čáru.
+            const GAP = 15 * 60 * 1000;
+            const GRID = 'rgba(0, 0, 0, 0.06)';
 
-            if (period === 'day') {
+            const num = (v) => { const n = parseFloat(v); return Number.isFinite(n) ? n : null; };
+            const fmtNum = (v) => v.toLocaleString('cs-CZ', { maximumFractionDigits: 1 });
+            const fmtTime = (ms) => new Date(ms).toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
+            const fmtDateTime = (ms) => new Date(ms).toLocaleString('cs-CZ', {
+                day: 'numeric', month: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+
+            const baseStyle = (p, m) => ({
+                loc: p.key,
+                metric: m.key,
+                label: m.name + ' ' + p.name.toLowerCase(),
+                yAxisID: m.axis,
+                borderColor: p.color,
+                backgroundColor: p.band,
+                pointBackgroundColor: p.color,
+                pointBorderColor: p.color,
+                borderWidth: 2,
+                cubicInterpolationMode: 'monotone',   // bez falešných vrcholů mezi body
+                pointHoverRadius: 4,
+                pointHitRadius: 8
+            });
+
+            let labels;
+            let xRange = null;
+            const datasets = [];
+
+            if (isDay) {
                 const data = await App.api.get('/api/climate/history?hours=24');
                 if (!data) return;
-                const coopData = data.coop || [];
-                const outdoorData = data.outdoor || [];
-                labels = coopData.map(r => {
-                    const d = new Date(r.recorded_at);
-                    return d.toLocaleTimeString('cs-CZ', { hour: '2-digit', minute: '2-digit' });
-                });
-                datasets = [
-                    {
-                        label: 'Teplota kurník (°C)',
-                        data: coopData.map(r => r.temperature),
-                        borderColor: '#b87949',
-                        backgroundColor: 'rgba(184, 121, 73, 0.1)',
-                        tension: 0.3, yAxisID: 'y'
-                    },
-                    {
-                        label: 'Teplota venku (°C)',
-                        data: outdoorData.map(r => r.temperature),
-                        borderColor: '#5ab19f',
-                        backgroundColor: 'rgba(90, 177, 159, 0.1)',
-                        tension: 0.3, yAxisID: 'y'
-                    },
-                    {
-                        label: 'Vlhkost kurník (%)',
-                        data: coopData.map(r => r.humidity),
-                        borderColor: '#b87949',
-                        backgroundColor: 'rgba(184, 121, 73, 0.1)',
-                        tension: 0.3, borderDash: [5, 5], yAxisID: 'y1'
-                    },
-                    {
-                        label: 'Vlhkost venku (%)',
-                        data: outdoorData.map(r => r.humidity),
-                        borderColor: '#5ab19f',
-                        backgroundColor: 'rgba(90, 177, 159, 0.1)',
-                        tension: 0.3, borderDash: [5, 5], yAxisID: 'y1'
+
+                // Kurník a venek se párují podle času, ne podle pořadí. Když jedno čidlo
+                // nějaké měření vynechá (input.php ho pak neuloží), nic se neposune.
+                const rows = {};
+                PLACES.forEach((p) => (data[p.key] || []).forEach((r) => {
+                    const t = new Date(String(r.recorded_at).replace(' ', 'T')).getTime();
+                    if (!Number.isFinite(t)) return;
+                    const minute = Math.round(t / 60000) * 60000;
+                    (rows[minute] = rows[minute] || {})[p.key] = r;
+                }));
+                const times = Object.keys(rows).map(Number).sort((a, b) => a - b);
+
+                if (times.length) {
+                    let min = times[0];
+                    let max = times[times.length - 1];
+                    if (max - min < 30 * 60000) {   // aspoň půlhodinové okno, i kdyby byl jen jeden bod
+                        const mid = (min + max) / 2;
+                        min = mid - 15 * 60000;
+                        max = mid + 15 * 60000;
                     }
-                ];
+                    const pad = (max - min) * 0.015;   // krajní body nesmí být useknuté o okraj
+                    xRange = { min: min - pad, max: max + pad };
+                }
+
+                // Pro každou řadu z jejích vlastních bodů (null = to místo v tu chvíli neměřilo):
+                //  gapBefore[i] – úsek končící bodem i leží v díře delší než GAP → nekreslit
+                //  isolated[i]  – bod nemá souseda do GAP → nakreslit jako tečku, jinak by nebyl vidět
+                const analyse = (points) => {
+                    const gapBefore = [];
+                    const isolated = [];
+                    let last = -1;
+                    points.forEach((pt, i) => {
+                        if (pt.y == null) return;
+                        const gap = last < 0 || pt.x - points[last].x > GAP;
+                        if (last >= 0 && gap) {
+                            for (let j = last + 1; j <= i; j++) gapBefore[j] = true;
+                        }
+                        isolated[i] = gap;                                    // zatím jen „vlevo nic“
+                        if (last >= 0 && !gap) isolated[last] = false;        // předchozí má souseda vpravo
+                        last = i;
+                    });
+                    return { gapBefore, isolated };
+                };
+
+                METRICS.forEach((m) => PLACES.forEach((p) => {
+                    const points = times.map((t) => ({
+                        x: t,
+                        y: rows[t][p.key] ? num(rows[t][p.key][m.field]) : null
+                    }));
+                    datasets.push({
+                        ...baseStyle(p, m),
+                        data: points,
+                        ...analyse(points),
+                        fill: false,
+                        spanGaps: true,   // jedno dvě vynechaná měření se přemostí, delší díru řeší segment
+                        segment: {
+                            borderColor: (ctx) => (ctx.chart.data.datasets[ctx.datasetIndex].gapBefore[ctx.p1DataIndex]
+                                ? 'transparent' : undefined)
+                        },
+                        pointRadius: (ctx) => (ctx.dataset.isolated[ctx.dataIndex] ? 3 : 0)
+                    });
+                }));
             } else {
-                let url, dateKey;
+                let url, key, fmtKey;
                 if (period === 'year') {
                     url = '/api/climate/history?group=month&months=12';
-                    dateKey = 'month';
+                    key = 'month';
+                    fmtKey = (k) => {
+                        const [y, m] = k.split('-');
+                        return new Date(parseInt(y), parseInt(m) - 1).toLocaleDateString('cs-CZ', { month: 'short' });
+                    };
                 } else {
                     const daysMap = { week: 7, month: 30 };
                     url = '/api/climate/history?group=day&days=' + (daysMap[period] || 7);
-                    dateKey = 'date';
+                    key = 'date';
+                    fmtKey = (k) => new Date(k + 'T00:00:00').toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric' });
                 }
                 const data = await App.api.get(url);
                 if (!data) return;
-                const coopData = data.coop || [];
-                const outdoorData = data.outdoor || [];
 
-                if (dateKey === 'month') {
-                    labels = coopData.map(r => {
-                        const [y, m] = r.month.split('-');
-                        const d = new Date(parseInt(y), parseInt(m) - 1);
-                        return d.toLocaleDateString('cs-CZ', { month: 'short' });
-                    });
-                } else {
-                    labels = coopData.map(r => {
-                        const d = new Date(r.date + 'T00:00:00');
-                        return d.toLocaleDateString('cs-CZ', { day: 'numeric', month: 'numeric' });
-                    });
-                }
+                // Společná osa = všechny dny/měsíce z obou míst; chybějící den = mezera, ne posun
+                const rows = {};
+                PLACES.forEach((p) => (data[p.key] || []).forEach((r) => {
+                    (rows[r[key]] = rows[r[key]] || {})[p.key] = r;
+                }));
+                const keys = Object.keys(rows).sort();
+                labels = keys.map(fmtKey);
+                const column = (loc, field) => keys.map((k) => (rows[k][loc] ? num(rows[k][loc][field]) : null));
 
-                const minLine = { borderWidth: 1, borderDash: [3, 3], pointRadius: 0 };
-                const maxLine = { borderWidth: 2, pointRadius: 2 };
-
-                datasets = [
-                    {
-                        label: 'Teplota kurník (°C)',
-                        data: coopData.map(r => parseFloat(r.temp_max)),
-                        borderColor: '#b87949',
-                        backgroundColor: 'rgba(184, 121, 73, 0.15)',
-                        fill: '+1', tension: 0.3, yAxisID: 'y', ...maxLine
-                    },
-                    {
-                        label: '_coopTempMin',
-                        data: coopData.map(r => parseFloat(r.temp_min)),
-                        borderColor: '#b87949',
-                        backgroundColor: 'rgba(184, 121, 73, 0.15)',
-                        fill: false, tension: 0.3, yAxisID: 'y', ...minLine
-                    },
-                    {
-                        label: 'Teplota venku (°C)',
-                        data: outdoorData.map(r => parseFloat(r.temp_max)),
-                        borderColor: '#5ab19f',
-                        backgroundColor: 'rgba(90, 177, 159, 0.15)',
-                        fill: '+1', tension: 0.3, yAxisID: 'y', ...maxLine
-                    },
-                    {
-                        label: '_outTempMin',
-                        data: outdoorData.map(r => parseFloat(r.temp_min)),
-                        borderColor: '#5ab19f',
-                        backgroundColor: 'rgba(90, 177, 159, 0.15)',
-                        fill: false, tension: 0.3, yAxisID: 'y', ...minLine
-                    },
-                    {
-                        label: 'Vlhkost kurník (%)',
-                        data: coopData.map(r => parseFloat(r.hum_max)),
-                        borderColor: '#b87949',
-                        backgroundColor: 'rgba(184, 121, 73, 0.15)',
-                        fill: '+1', tension: 0.3, borderDash: [5, 5], yAxisID: 'y1', ...maxLine
-                    },
-                    {
-                        label: '_coopHumMin',
-                        data: coopData.map(r => parseFloat(r.hum_min)),
-                        borderColor: '#b87949',
-                        backgroundColor: 'rgba(184, 121, 73, 0.15)',
-                        fill: false, tension: 0.3, yAxisID: 'y1', ...minLine
-                    },
-                    {
-                        label: 'Vlhkost venku (%)',
-                        data: outdoorData.map(r => parseFloat(r.hum_max)),
-                        borderColor: '#5ab19f',
-                        backgroundColor: 'rgba(90, 177, 159, 0.15)',
-                        fill: '+1', tension: 0.3, borderDash: [5, 5], yAxisID: 'y1', ...maxLine
-                    },
-                    {
-                        label: '_outHumMin',
-                        data: outdoorData.map(r => parseFloat(r.hum_min)),
-                        borderColor: '#5ab19f',
-                        backgroundColor: 'rgba(90, 177, 159, 0.15)',
-                        fill: false, tension: 0.3, yAxisID: 'y1', ...minLine
-                    }
-                ];
+                // Pás mezi minimem a maximem: plná čára = maximum, tenká čárkovaná = minimum
+                METRICS.forEach((m) => PLACES.forEach((p) => {
+                    const mins = column(p.key, m.key + '_min');
+                    datasets.push(
+                        {
+                            ...baseStyle(p, m),
+                            data: column(p.key, m.key + '_max'),
+                            minData: mins,
+                            fill: '+1',
+                            pointRadius: 2.5
+                        },
+                        {
+                            ...baseStyle(p, m),
+                            isMin: true,
+                            data: mins,
+                            fill: false,
+                            borderWidth: 1,
+                            borderDash: [3, 3],
+                            pointRadius: 0,
+                            pointHitRadius: 0
+                        }
+                    );
+                }));
             }
+
+            // Rozsah osy y: nikdy užší než `span` (jinak by šum o pár desetin vypadal jako skok),
+            // kousek odstupu od okraje panelu a u vlhkosti nikdy mimo 0–100 %.
+            const axisRange = (span, lo, hi) => (axis) => {
+                let min = axis.min;
+                let max = axis.max;
+                if (!Number.isFinite(min) || !Number.isFinite(max)) return;
+                if (max - min < span) {
+                    const mid = (min + max) / 2;
+                    min = mid - span / 2;
+                    max = mid + span / 2;
+                }
+                const pad = (max - min) * 0.08;
+                min -= pad;
+                max += pad;
+                if (lo != null && min < lo) { max = Math.min(hi != null ? hi : Infinity, max + (lo - min)); min = lo; }
+                if (hi != null && max > hi) { min = Math.max(lo != null ? lo : -Infinity, min - (max - hi)); max = hi; }
+                axis.min = min;
+                axis.max = max;
+            };
+            const panel = (title, span, lo, hi) => ({
+                type: 'linear',
+                position: 'left',
+                stack: 'climate',      // osy y nad sebou ve stejném grafu
+                stackWeight: 1,
+                title: { display: true, text: title },
+                grid: { color: GRID },
+                afterDataLimits: axisRange(span, lo, hi)
+            });
+
+            // Popisky časové osy na celé čtvrthodiny / hodiny (podle délky okna), max. ~7
+            const timeTicks = (axis) => {
+                const steps = [5, 10, 15, 30, 60, 120, 180, 240, 360].map((m) => m * 60000);
+                const step = steps.find((s) => (axis.max - axis.min) / s <= 7) || steps[steps.length - 1];
+                const offset = new Date(axis.min).getTimezoneOffset() * 60000;
+                const ticks = [];
+                for (let t = Math.ceil((axis.min - offset) / step) * step + offset; t <= axis.max; t += step) {
+                    ticks.push({ value: t });
+                }
+                axis.ticks = ticks;
+            };
+
+            const hasData = (loc) => datasets.some((ds) => ds.loc === loc &&
+                ds.data.some((v) => (v !== null && typeof v === 'object' ? v.y : v) != null));
 
             if (App.charts.climateChart) App.charts.climateChart.destroy();
 
@@ -340,34 +411,75 @@ const App = {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    locale: 'cs-CZ',
                     interaction: { mode: 'index', intersect: false },
                     scales: {
-                        y: {
-                            type: 'linear', position: 'left',
-                            title: { display: true, text: '°C' }
+                        x: isDay ? {
+                            type: 'linear',
+                            min: xRange ? xRange.min : undefined,
+                            max: xRange ? xRange.max : undefined,
+                            bounds: 'data',
+                            afterBuildTicks: timeTicks,
+                            ticks: { callback: (v) => fmtTime(v), maxRotation: 0, autoSkip: false },
+                            grid: { color: GRID }
+                        } : {
+                            type: 'category',
+                            ticks: { maxRotation: 0, autoSkip: true },
+                            grid: { color: GRID }
                         },
-                        y1: {
-                            type: 'linear', position: 'right',
-                            title: { display: true, text: '%' },
-                            grid: { drawOnChartArea: false }
+                        // Pořadí určuje umístění: osa uvedená později je v Chart.js výš.
+                        // ySpacer je prázdná osa bez popisků = mezera mezi panely.
+                        yHum: panel('Vlhkost (%)', 20, 0, 100),
+                        ySpacer: {
+                            type: 'linear', position: 'left', stack: 'climate', stackWeight: 0.12,
+                            ticks: { display: false }, grid: { display: false }, border: { display: false }
                         },
-                        x: {
-                            ticks: { autoSkip: period === 'day', maxTicksLimit: period === 'day' ? 8 : undefined }
-                        }
+                        yTemp: panel('Teplota (°C)', 10)
                     },
                     plugins: {
                         legend: {
                             position: 'bottom',
+                            // Klik na „Kurník“ / „Venku“ skryje teplotu i vlhkost daného místa
+                            onClick: (e, item, legend) => {
+                                const chart = legend.chart;
+                                const loc = chart.data.datasets[item.datasetIndex].loc;
+                                const show = !chart.isDatasetVisible(item.datasetIndex);
+                                chart.data.datasets.forEach((ds, i) => {
+                                    if (ds.loc === loc) chart.setDatasetVisibility(i, show);
+                                });
+                                chart.update();
+                            },
                             labels: {
                                 boxWidth: 12,
-                                filter: (item) => !item.text.startsWith('_')
+                                boxHeight: 12,
+                                generateLabels: (chart) => PLACES.filter((p) => hasData(p.key)).map((p) => {
+                                    const i = chart.data.datasets.findIndex((ds) => ds.loc === p.key && !ds.isMin);
+                                    return {
+                                        text: p.name,
+                                        fillStyle: p.color,
+                                        strokeStyle: p.color,
+                                        lineWidth: 0,
+                                        hidden: !chart.isDatasetVisible(i),
+                                        datasetIndex: i
+                                    };
+                                })
                             }
                         },
                         tooltip: {
+                            filter: (item) => !item.dataset.isMin,
                             callbacks: {
+                                title: (items) => {
+                                    if (!items.length) return '';
+                                    return isDay ? fmtDateTime(items[0].parsed.x) : items[0].label;
+                                },
                                 label: (ctx) => {
-                                    if (ctx.dataset.label.startsWith('_')) return null;
-                                    return ctx.dataset.label + ': ' + ctx.formattedValue;
+                                    const ds = ctx.dataset;
+                                    const m = METRICS.find((x) => x.key === ds.metric);
+                                    const min = ds.minData ? ds.minData[ctx.dataIndex] : null;
+                                    const value = min != null
+                                        ? fmtNum(min) + ' – ' + fmtNum(ctx.parsed.y)
+                                        : fmtNum(ctx.parsed.y);
+                                    return ' ' + ds.label + ': ' + value + m.unit;
                                 }
                             }
                         }
@@ -729,7 +841,7 @@ const App = {
                 const img = item.querySelector('img');
                 if (img) {
                     // Zobrazit plnou verzi (ne thumbnail)
-                    const fullSrc = img.src.replace('/uploads/thumbs/', '/uploads/');
+                    const fullSrc = img.src.replace('/foto/thumbs/', '/foto/');
                     App.gallery.openLightbox(fullSrc);
                 }
             });
@@ -757,9 +869,9 @@ const App = {
                     const div = document.createElement('div');
                     div.className = 'gallery-item';
                     div.dataset.id = photo.id;
-                    div.innerHTML = `<img src="/uploads/thumbs/${App.escapeHtml(photo.filename)}"
+                    div.innerHTML = `<img src="/foto/thumbs/${App.escapeHtml(photo.filename)}"
                         alt="${App.escapeHtml(photo.caption || '')}" loading="lazy"
-                        onerror="this.onerror=null;this.src='/uploads/${App.escapeHtml(photo.filename)}'">`;
+                        onerror="this.onerror=null;this.src='/foto/${App.escapeHtml(photo.filename)}'">`;
                     grid.prepend(div);
                 }
                 input.value = '';

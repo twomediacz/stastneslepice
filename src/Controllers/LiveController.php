@@ -14,15 +14,16 @@ class LiveController
 
         $streams = [];
         $urls = [
-            ['key' => 'youtube_livestream_url', 'label' => 'Kurník', 'color' => 'brown'],
-            ['key' => 'youtube_livestream_url_2', 'label' => 'Výběh', 'color' => 'green'],
+            ['key' => 'youtube_livestream_url_1', 'label' => 'Kamera 1', 'color' => 'brown'],
+            ['key' => 'youtube_livestream_url_2', 'label' => 'Kamera 2', 'color' => 'green'],
+            ['key' => 'youtube_livestream_url_3', 'label' => 'Kamera 3', 'color' => 'blue'],
         ];
 
         foreach ($urls as $stream) {
             $url = $settings[$stream['key']] ?? '';
             $embedUrl = '';
             if ($url && preg_match('/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|live\/))([a-zA-Z0-9_-]+)/', $url, $m)) {
-                $embedUrl = 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1&mute=1';
+                $embedUrl = 'https://www.youtube.com/embed/' . $m[1] . '?autoplay=1&mute=1&playsinline=1';
             }
             $streams[] = [
                 'label' => $stream['label'],

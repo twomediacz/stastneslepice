@@ -14,7 +14,7 @@ class ExistingPhotoResizeService
         $maxLongSide = (int) ($options['max'] ?? 1080);
         $dryRun = (bool) ($options['dry_run'] ?? true);
         $backup = (bool) ($options['backup'] ?? true);
-        $uploadDir = rtrim($root, '/') . '/public/uploads';
+        $uploadDir = rtrim($root, '/') . '/public/foto';
         $thumbDir = $uploadDir . '/thumbs';
 
         $lines = [];
@@ -32,11 +32,11 @@ class ExistingPhotoResizeService
         }
 
         if (!is_dir($uploadDir)) {
-            return $this->result(false, ['Adresář public/uploads neexistuje.'], $stats);
+            return $this->result(false, ['Adresář public/foto neexistuje.'], $stats);
         }
 
         if (!$dryRun && !is_dir($thumbDir) && !mkdir($thumbDir, 0755, true)) {
-            return $this->result(false, ['Nepodařilo se vytvořit adresář public/uploads/thumbs.'], $stats);
+            return $this->result(false, ['Nepodařilo se vytvořit adresář public/foto/thumbs.'], $stats);
         }
 
         try {

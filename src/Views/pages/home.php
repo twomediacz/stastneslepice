@@ -16,30 +16,7 @@ $visitStats = $visitStats ?? [
 
 <section class="dashboard">
 
-    <!-- Klimatické karty -->
-    <!-- <div class="card dashboard__climate-card">
-        <div class="dashboard__climate">
-            <div class="climate-section climate-section--coop">
-                <div class="climate-section__header climate-section__header--blue">Kurník</div>
-                <div class="climate-body">
-                    <div class="climate-values">
-                        <span class="climate-val"><span class="climate-icon">&#x1F321;&#xFE0F;</span> <strong><?= $coopTemp ?>&deg;C</strong></span>
-                        <span class="climate-val"><span class="climate-icon">&#x1F4A7;</span> <strong><?= $coopHum ?>%</strong></span>
-                    </div>
-                    </div>
-            </div>
 
-            <div class="climate-section climate-section--outdoor">
-                <div class="climate-section__header climate-section__header--green">Venku</div>
-                <div class="climate-body">
-                    <div class="climate-values">
-                        <span class="climate-val"><span class="climate-icon">&#x1F321;&#xFE0F;</span> <strong><?= $outTemp ?>&deg;C</strong></span>
-                        <span class="climate-val"><span class="climate-icon">&#x1F4A7;</span> <strong><?= $outHum ?>%</strong></span>
-                    </div>
-                    </div>
-            </div>
-        </div>
-    </div> -->
 
     <!-- Hlavní obsah: 2 sloupce -->
     <div class="dashboard__main">
@@ -115,9 +92,10 @@ $visitStats = $visitStats ?? [
             </div>
 
             <!-- Graf: Teplota & Vlhkost -->
-            <div class="card card--temporarily-hidden">
+
+            <div class="card">
                 <div class="card__header card__header--blue">
-                    <span>&#x1F4CA; Teplota</span>
+                    <span>&#x1F4CA; Teplota & vlhkost</span>
                     <div class="period-toggle" id="climate-period-toggle">
                         <button class="period-toggle__btn period-toggle__btn--active" data-period="day">Den</button>
                         <button class="period-toggle__btn" data-period="week">Týden</button>
@@ -125,13 +103,13 @@ $visitStats = $visitStats ?? [
                         <button class="period-toggle__btn" data-period="year">Rok</button>
                     </div>
                 </div>
-                <div class="chart-container">
+                <div class="chart-container chart-container--climate">
                     <canvas id="chart-climate"></canvas>
                 </div>
             </div>
 
             <!-- Poznámky -->
-            <?php require __DIR__ . '/../partials/note_card.php'; ?>
+          <!--  <?php require __DIR__ . '/../partials/note_card.php'; ?>  -->
 
         </div>
 
@@ -157,24 +135,8 @@ $visitStats = $visitStats ?? [
                 </div>
             </div>
 
-            <!-- Pohádka o slepicích -->
-            <div class="card">
-                <div class="card__header card__header--video">&#x1F3AC; Pohádka o slepicích</div>
-                <div class="card__inner">
-                    <div class="live-video">
-                        <iframe
-                            src="https://www.youtube.com/embed/rVH1nboY_Cs"
-                            title="Pohádka o slepicích"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin"
-                            allowfullscreen></iframe>
-                    </div>
-                </div>
-            </div>
-
             <!-- Kurník -->
-            <div class="card card--temporarily-hidden">
+            <div class="card">
                 <div class="card__header card__header--brown">&#x1F3E0; Kurník</div>
                 <div class="stat-grid2">
                     <div class="stat-card stat-card--brown">
@@ -189,7 +151,7 @@ $visitStats = $visitStats ?? [
             </div>
 
             <!-- Výběh -->
-            <div class="card card--temporarily-hidden">
+            <div class="card">
                 <div class="card__header card__header--teal">&#x1F33B; Výběh</div>
                 <div class="stat-grid2">
                     <div class="stat-card stat-card--teal">
@@ -204,7 +166,7 @@ $visitStats = $visitStats ?? [
             </div>
 
             <!-- Podestýlka -->
-            <?php
+        <!--   <?php
             function dnyTextHome(int $n): string {
                 $abs = abs($n);
                 if ($abs === 1) return $abs . ' den';
@@ -239,26 +201,21 @@ $visitStats = $visitStats ?? [
                         <span class="stat-card__label">Příští výměna</span>
                     </div>
                 </div>
-            </div>
+            </div>  -->
 
             <!-- Počasí -->
-            <div class="card">
+      <!--      <div class="card">
                 <div class="card__header card__header--blue">&#x26C5; Počasí</div>
                 <div id="weather-content" class="weather-list">
                     <p class="text-muted">Načítám předpověď...</p>
                 </div>
-            </div>
+            </div>  -->
 
             <!-- Vtipy o slepicích -->
-            <div class="card">
+      <!--      <div class="card">
                 <div class="card__header card__header--joke">
                     <span>&#x1F414; Vtip</span>
-                    <!-- <div class="joke-header-btns">
-                        <button type="button" class="btn btn--outline btn--round btn--white" onclick="App.jokes.loadRandom()" title="Další vtip">&#x1F504;</button>
-                        <?php if ($isLoggedIn): ?>
-                        <button type="button" class="btn btn--primary btn--round" onclick="App.jokes.toggleForm()">Přidat</button>
-                        <?php endif; ?>
-                    </div> -->
+
                 </div>
                 <div class="card__inner">
                     <?php if ($isLoggedIn): ?>
@@ -281,7 +238,7 @@ $visitStats = $visitStats ?? [
                         <?php endif; ?>
                     </div>
                 </div>
-            </div>
+            </div>  -->
 
             <!-- Galerie fotek -->
             <div class="card">
@@ -296,10 +253,10 @@ $visitStats = $visitStats ?? [
                     <div id="gallery-grid" class="gallery-grid">
                         <?php foreach ($photos as $photo): ?>
                         <div class="gallery-item" data-id="<?= $photo['id'] ?>">
-                            <img src="/uploads/thumbs/<?= htmlspecialchars($photo['filename']) ?>"
+                            <img src="/foto/thumbs/<?= htmlspecialchars($photo['filename']) ?>"
                                  alt="<?= htmlspecialchars($photo['caption'] ?? '') ?>"
                                  loading="lazy"
-                                 onerror="this.onerror=null;this.src='/uploads/<?= htmlspecialchars($photo['filename']) ?>'">
+                                 onerror="this.onerror=null;this.src='/foto/<?= htmlspecialchars($photo['filename']) ?>'">
                             <?php if ($isLoggedIn): ?>
                             <button class="gallery-item__delete" onclick="event.stopPropagation();App.gallery.remove(<?= $photo['id'] ?>)">&times;</button>
                             <?php endif; ?>
@@ -308,6 +265,22 @@ $visitStats = $visitStats ?? [
                     </div>
                 </div>
             </div>
+
+            <!-- Pohádka o slepicích -->
+        <!--    <div class="card">
+                <div class="card__header card__header--video">&#x1F3AC; Pohádka o slepicích</div>
+                <div class="card__inner">
+                    <div class="live-video">
+                        <iframe
+                            src="https://www.youtube.com/embed/rVH1nboY_Cs"
+                            title="Pohádka o slepicích"
+                            frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen></iframe>
+                    </div>
+                </div>
+            </div>   -->
 
             <!-- Návštěvnost -->
             <div class="card dashboard-card--visits">

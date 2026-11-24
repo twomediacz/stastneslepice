@@ -45,7 +45,7 @@ class PhotoController extends Controller
         };
 
         $filename = date('Ymd_His') . '_' . uniqid() . '.' . $ext;
-        $uploadDir = __DIR__ . '/../../../public/uploads/';
+        $uploadDir = __DIR__ . '/../../../public/foto/';
         $thumbDir = $uploadDir . 'thumbs/';
 
         if (!is_dir($uploadDir)) {
@@ -89,7 +89,7 @@ class PhotoController extends Controller
     {
         Auth::requireAuthApi();
 
-        $uploadDir = __DIR__ . '/../../../public/uploads/';
+        $uploadDir = __DIR__ . '/../../../public/foto/';
         $thumbDir = $uploadDir . 'thumbs/';
 
         if (!is_dir($thumbDir)) {

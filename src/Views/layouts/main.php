@@ -31,7 +31,7 @@
             </button>
             <nav class="site-nav" id="site-nav">
                 <a href="/" class="site-nav__tab <?= ($currentPath === '/' || $currentPath === '') ? 'is-active' : '' ?>">N&aacute;stěnka</a>
-                <!-- <a href="/zive" class="site-nav__tab <?= $currentPath === '/zive' ? 'is-active' : '' ?>">Kamery</a> -->
+                <a href="/zive" class="site-nav__tab <?= $currentPath === '/zive' ? 'is-active' : '' ?>">Kamery</a>
                 <a href="/slepice" class="site-nav__tab <?= $currentPath === '/slepice' ? 'is-active' : '' ?>">Slepice</a>
                 <a href="/denik" class="site-nav__tab <?= $currentPath === '/denik' ? 'is-active' : '' ?>">Den&iacute;k</a>
                 <?php if (\App\Core\Auth::check()): ?>

@@ -93,7 +93,7 @@ $isLoggedIn = \App\Core\Auth::check();
         <div class="chicken-card card" data-id="<?= $ch['id'] ?>">
             <div class="chicken-card__photo">
                 <?php if ($ch['photo']): ?>
-                    <img src="/uploads/<?= htmlspecialchars($ch['photo']) ?>" alt="<?= htmlspecialchars($ch['name']) ?>">
+                    <img src="/foto/<?= htmlspecialchars($ch['photo']) ?>" alt="<?= htmlspecialchars($ch['name']) ?>">
                 <?php else: ?>
                     <div class="chicken-card__no-photo">&#x1F414;</div>
                 <?php endif; ?>

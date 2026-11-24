@@ -10,9 +10,12 @@
 /storage/logs/*.log
 /public/uploads/*
 !/public/uploads/.htaccess
+/public/foto/*
+!/public/foto/.htaccess
 
 # Local configuration and editor files
 /config/config.local.php
+/config/raspberry.local.php
 .env
 .DS_Store
 *.swp

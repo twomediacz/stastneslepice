@@ -110,7 +110,7 @@ class ChickenController extends Controller
         };
 
         $filename = 'chicken_' . $id . '_' . uniqid() . '.' . $ext;
-        $uploadDir = __DIR__ . '/../../../public/uploads/';
+        $uploadDir = __DIR__ . '/../../../public/foto/';
 
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
@@ -147,7 +147,7 @@ class ChickenController extends Controller
         // Smazat fotku
         $chicken = Chicken::findById($id);
         if ($chicken && $chicken['photo']) {
-            $uploadDir = __DIR__ . '/../../../public/uploads/';
+            $uploadDir = __DIR__ . '/../../../public/foto/';
             @unlink($uploadDir . $chicken['photo']);
         }
 

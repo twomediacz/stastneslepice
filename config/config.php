@@ -13,13 +13,13 @@ $config = [
         'debug' => false,
     ],
     'api' => [
-        'climate_key' => '', // Nastavte v config.local.php
-        'openai_api_key' => getenv('OPENAI_API_KEY') ?: '',
+        'raspberry_key' => '', // Nastavte v config.local.php
+        'openai_api_key' => getenv('OPENAI_API_KEY') ?: '', // Nastavte v config.local.php
         'tts_model' => getenv('OPENAI_TTS_MODEL') ?: 'gpt-4o-mini-tts',
         'tts_voice' => getenv('OPENAI_TTS_VOICE') ?: 'cedar',
         'tts_format' => getenv('OPENAI_TTS_FORMAT') ?: 'mp3',
         'tts_instructions' => getenv('OPENAI_TTS_INSTRUCTIONS') ?: 'Mluv přirozenou češtinou klidným mužským hlasem. Čti pouze dodaný text deníku, bez data a bez dalších úvodů.',
-        'tts_debug_token' => getenv('OPENAI_TTS_DEBUG_TOKEN') ?: '',
+        'tts_debug_token' => '', // Nastavte v config.local.php
     ],
     'db' => [
         'driver' => getenv('DB_DRIVER') ?: 'mysql',

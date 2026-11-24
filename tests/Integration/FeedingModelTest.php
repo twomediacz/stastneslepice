@@ -7,12 +7,15 @@ namespace Tests\Integration;
 use App\Models\FeedPurchase;
 use App\Models\FeedType;
 use App\Models\FeedingRecord;
+use DateTimeImmutable;
 use Tests\Support\DatabaseTestCase;
 
 final class FeedingModelTest extends DatabaseTestCase
 {
     public function testFeedingTotalsBreakdownsAndPurchasesAreCalculated(): void
     {
+        $today = new DateTimeImmutable('today');
+
         $grainId = FeedType::insert([
             'name' => 'Psenice',
             'price_per_kg' => 12.5,
@@ -26,29 +29,29 @@ final class FeedingModelTest extends DatabaseTestCase
 
         FeedingRecord::insert([
             'feed_type_id' => $grainId,
-            'record_date' => date('Y-m-d'),
+            'record_date' => $today->format('Y-m-d'),
             'amount_kg' => 1.2,
         ]);
         FeedingRecord::insert([
             'feed_type_id' => $mixId,
-            'record_date' => date('Y-m-d', strtotime('-1 day')),
+            'record_date' => $today->modify('-1 day')->format('Y-m-d'),
             'amount_kg' => 0.8,
         ]);
         FeedingRecord::insert([
             'feed_type_id' => $grainId,
-            'record_date' => date('Y-m-d', strtotime('-45 days')),
+            'record_date' => $today->modify('-45 days')->format('Y-m-d'),
             'amount_kg' => 2.0,
         ]);
 
         FeedPurchase::insert([
             'feed_type_id' => $grainId,
-            'purchased_at' => date('Y-m-d'),
+            'purchased_at' => $today->format('Y-m-d'),
             'quantity_kg' => 25,
             'total_price' => 300,
         ]);
         FeedPurchase::insert([
             'feed_type_id' => $mixId,
-            'purchased_at' => date('Y-m-d', strtotime('-20 days')),
+            'purchased_at' => $today->modify('first day of last month')->format('Y-m-d'),
             'quantity_kg' => 10,
             'total_price' => 180,
         ]);

@@ -26,7 +26,7 @@ class Photo extends Model
     {
         $photo = static::findById($id);
         if ($photo) {
-            $basePath = __DIR__ . '/../../public/uploads/';
+            $basePath = __DIR__ . '/../../public/foto/';
             @unlink($basePath . $photo['filename']);
             @unlink($basePath . 'thumbs/' . $photo['filename']);
             return static::delete($id);

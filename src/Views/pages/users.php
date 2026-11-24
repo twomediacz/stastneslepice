@@ -12,12 +12,16 @@ $currentUserId = \App\Core\Auth::user()['id'] ?? 0;
             <div class="card__inner">
                 <form id="streams-form" class="streams-form">
                     <div class="streams-form__field">
-                        <label for="stream-url-1">Kurník – YouTube URL</label>
-                        <input type="url" id="stream-url-1" name="youtube_livestream_url" placeholder="https://www.youtube.com/watch?v=..." value="<?= htmlspecialchars($settings['youtube_livestream_url'] ?? '') ?>">
+                        <label for="stream-url-1">Kamera 1 – YouTube URL</label>
+                        <input type="url" id="stream-url-1" name="youtube_livestream_url_1" placeholder="https://www.youtube.com/watch?v=..." value="<?= htmlspecialchars($settings['youtube_livestream_url_1'] ?? '') ?>">
                     </div>
                     <div class="streams-form__field">
-                        <label for="stream-url-2">Výběh – YouTube URL</label>
+                        <label for="stream-url-2">Kamera 2 – YouTube URL</label>
                         <input type="url" id="stream-url-2" name="youtube_livestream_url_2" placeholder="https://www.youtube.com/watch?v=..." value="<?= htmlspecialchars($settings['youtube_livestream_url_2'] ?? '') ?>">
+                    </div>
+                    <div class="streams-form__field">
+                        <label for="stream-url-2">Kamera 3 – YouTube URL</label>
+                        <input type="url" id="stream-url-3" name="youtube_livestream_url_3" placeholder="https://www.youtube.com/watch?v=..." value="<?= htmlspecialchars($settings['youtube_livestream_url_3'] ?? '') ?>">
                     </div>
                     <div class="form-buttons">
                         <button type="submit" class="btn btn--primary btn--round btn--small">Uložit</button>
